@@ -217,10 +217,38 @@ function copyText() {
   });
 }
 
-function shareWhatsApp() {
+async function shareWhatsApp() {
   const p = currentProduct;
-  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
+
+  if (navigator.share && selectedPhotos.length > 0) {
+    try {
+      const btn = document.getElementById('wspBtn');
+      btn.textContent = 'Preparando fotos...';
+      btn.disabled = true;
+
+      const filePromises = selectedPhotos.map(async (url, i) => {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const ext = blob.type.includes('png') ? 'png' : 'jpg';
+        return new File([blob], `foto_${i+1}.${ext}`, { type: blob.type });
+      });
+
+      const files = await Promise.all(filePromises);
+
+      await navigator.share({ text, files });
+    } catch(e) {
+      const text2 = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text2)}`);
+    } finally {
+      const btn = document.getElementById('wspBtn');
+      btn.textContent = '💬 Compartir por WhatsApp';
+      btn.disabled = false;
+    }
+  } else {
+    const text2 = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text2)}`);
+  }
 }
 
 function goBack() {
