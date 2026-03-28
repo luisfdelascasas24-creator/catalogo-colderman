@@ -96,7 +96,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 <script>
 const SHEET_ID = '1pXIUcd2WNbr29ZWkxOdISj--yTB64vPAxQyfVjOLoQ0';
-const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
 
 let allProducts = [];
 let currentProduct = null;
@@ -107,15 +107,15 @@ async function loadProducts() {
     const res = await fetch(URL);
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
-    const cols = json.table.cols.map(c => c.label);
     const rows = json.table.rows;
+    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4'];
     allProducts = rows.map(row => {
       const obj = {};
-      cols.forEach((col, i) => {
-        obj[col] = row.c[i] ? (row.c[i].v || '') : '';
+      colNames.forEach((col, i) => {
+        obj[col] = row.c[i] ? (String(row.c[i].v) || '') : '';
       });
       return obj;
-    }).filter(p => p['Código'] || p['Producto']);
+    }).filter(p => p['Codigo'] || p['Producto']);
     renderList(allProducts);
   } catch(e) {
     document.getElementById('productList').innerHTML = '<div class="empty">Error cargando productos.</div>';
@@ -139,7 +139,7 @@ function renderList(products) {
       ${thumb}
       <div class="product-info">
         <p class="product-name">${p['Producto'] || ''} ${p['Item'] || ''}</p>
-        <p class="product-code">Cód: ${p['Código'] || ''} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
+        <p class="product-code">Cód: ${p['Codigo'] || ''} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
       </div>
       <span class="arrow">›</span>
     </div>`;
@@ -159,9 +159,9 @@ function showDetail(idx) {
   selectedPhotos = [];
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('detailView').classList.add('active');
-  document.getElementById('detailTitle').textContent = currentProduct['Código'] || '';
+  document.getElementById('detailTitle').textContent = currentProduct['Codigo'] || '';
   document.getElementById('dNombre').textContent = `${currentProduct['Producto'] || ''} ${currentProduct['Item'] || ''}`;
-  document.getElementById('dCodigo').textContent = `Código: ${currentProduct['Código'] || ''}`;
+  document.getElementById('dCodigo').textContent = `Código: ${currentProduct['Codigo'] || ''}`;
 
   const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante'];
   document.getElementById('specsContainer').innerHTML = specs
@@ -205,7 +205,7 @@ function updateWspBtn() {
 
 function copyText() {
   const p = currentProduct;
-  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Código'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nRanuras Polea: ${p['Ranuras Polea'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
+  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nRanuras Polea: ${p['Ranuras Polea'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
   navigator.clipboard.writeText(text).then(() => {
     const msg = document.getElementById('copiedMsg');
     msg.style.display = 'block';
@@ -215,7 +215,7 @@ function copyText() {
 
 function shareWhatsApp() {
   const p = currentProduct;
-  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Código'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
+  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
 }
 
