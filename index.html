@@ -27,7 +27,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .product-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; cursor: pointer; }
 .product-card:active { background: #f5f5f5; }
 .product-thumb { width: 56px; height: 56px; border-radius: 8px; background: #f0f2f5; object-fit: cover; flex-shrink: 0; }
-.product-thumb-placeholder { width: 56px; height: 56px; border-radius: 8px; background: #f0f2f5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #bbb; font-size: 22px; }
 .product-info { flex: 1; min-width: 0; }
 .product-name { font-size: 14px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .product-code { font-size: 12px; color: #888; margin-top: 3px; }
@@ -44,19 +43,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .detail-body { padding: 14px; }
 .detail-name { font-size: 17px; font-weight: 600; color: #222; }
 .detail-code { font-size: 13px; color: #888; margin-top: 3px; margin-bottom: 16px; }
-.specs-title { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
 .spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
 .spec-label { color: #888; }
 .spec-val { color: #222; font-weight: 500; }
 .actions { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.btn-copy { width: 100%; padding: 13px; border-radius: 10px; border: 1.5px solid #185FA5; background: #E6F1FB; color: #0C447C; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-copy:active { background: #B5D4F4; }
-.btn-wsp { width: 100%; padding: 13px; border-radius: 10px; border: none; background: #25D366; color: white; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-wsp:active { background: #1da851; }
-.btn-wsp:disabled { background: #b0b0b0; cursor: not-allowed; }
-.select-hint { font-size: 12px; color: #888; text-align: center; }
-.copied-msg { font-size: 13px; color: #25D366; text-align: center; font-weight: 500; display: none; }
-.empty { padding: 3rem; text-align: center; color: #888; font-size: 14px; }
+.btn-wsp { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #25D366; color: white; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
+.btn-wsp:disabled { background: #b0b0b0; box-shadow: none; }
+.select-hint { font-size: 12px; color: #888; text-align: center; margin-top: 5px; }
+.copied-msg { font-size: 13px; color: #25D366; text-align: center; font-weight: 500; display: none; margin-top: 5px; }
 </style>
 </head>
 <body>
@@ -67,38 +61,32 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <span class="topbar-title">📦 Catálogo Colderman</span>
     </div>
     <div class="search-wrap">
-      <input type="text" id="searchInput" placeholder="Buscar por código, producto o marca..." oninput="filterProducts()" />
+      <input type="text" id="searchInput" placeholder="Buscar producto, marca o código..." oninput="filterProducts()" />
     </div>
     <div class="cats-wrap" id="catsWrap">
-      <button class="cat active" onclick="filterCat(this, '')" >Todos</button>
+      <button class="cat active" onclick="filterCat(this, '')">Todos</button>
     </div>
     <div id="productCount" class="count-badge"></div>
-    <div id="productList" class="product-list">
-      <div class="loading">Cargando productos...</div>
-    </div>
+    <div id="productList" class="product-list"></div>
   </div>
 
   <div class="detail-view" id="detailView">
     <div class="topbar">
       <button class="back-btn" onclick="goBack()">‹ Volver</button>
-      <span class="topbar-title" id="detailTitle"></span>
+      <span class="topbar-title" id="detailTitle">Detalle</span>
     </div>
     <div class="photos-grid" id="photosGrid"></div>
     <div class="detail-body">
       <p class="detail-name" id="dNombre"></p>
       <p class="detail-code" id="dCodigo"></p>
-      <p class="specs-title">Especificaciones</p>
       <div id="specsContainer"></div>
     </div>
     <div class="actions">
-      <button class="btn-copy" onclick="copyText()">
-        📋 Copiar datos del producto
+      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>
+        💬 Enviar por WhatsApp
       </button>
-      <div class="copied-msg" id="copiedMsg">✓ Datos copiados al portapapeles</div>
-      <button class="btn-wsp" id="wspBtn" onclick="shareWhatsApp()" disabled>
-        💬 Compartir por WhatsApp
-      </button>
-      <p class="select-hint" id="selectHint">Selecciona las fotos que quieres enviar</p>
+      <p class="select-hint" id="selectHint">Selecciona fotos para enviar</p>
+      <div class="copied-msg" id="copiedMsg">✓ Texto listo para pegar</div>
     </div>
   </div>
 </div>
@@ -128,40 +116,28 @@ async function loadProducts() {
     }).filter(p => p['Codigo'] || p['Producto']);
     renderCats(allProducts);
     renderList(allProducts);
-  } catch(e) {
-    document.getElementById('productList').innerHTML = '<div class="empty">Error cargando productos.</div>';
-  }
+  } catch(e) { console.error("Error cargando datos:", e); }
 }
 
 function renderList(products) {
   const list = document.getElementById('productList');
-  const count = document.getElementById('productCount');
-  count.textContent = `${products.length} productos`;
-  if (products.length === 0) {
-    list.innerHTML = '<div class="empty">No se encontraron productos</div>';
-    return;
-  }
-  list.innerHTML = products.map((p) => {
-    const foto = p['Foto1'] || '';
-    const thumb = foto
-      ? `<img class="product-thumb" src="${foto}" onerror="this.style.display='none'" />`
-      : `<div class="product-thumb-placeholder">📦</div>`;
-    return `<div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
-      ${thumb}
+  document.getElementById('productCount').textContent = `${products.length} productos disponibles`;
+  list.innerHTML = products.map((p) => `
+    <div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
+      <img class="product-thumb" src="${p['Foto1']}" onerror="this.src='https://via.placeholder.com/60?text=📦'" />
       <div class="product-info">
-        <p class="product-name">${p['Producto'] || ''} ${p['Item'] || ''}</p>
-        <p class="product-code">Cód: ${p['Codigo'] || ''} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
+        <p class="product-name">${p['Producto']} ${p['Item']}</p>
+        <p class="product-code">${p['Codigo']} · ${p['Marca']}</p>
       </div>
       <span class="arrow">›</span>
-    </div>`;
-  }).join('');
+    </div>`).join('');
 }
 
 function renderCats(products) {
   const cats = [...new Set(products.map(p => p['Producto']).filter(Boolean))].sort();
   const wrap = document.getElementById('catsWrap');
-  wrap.innerHTML = `<button class="cat ${activeCat === '' ? 'active' : ''}" onclick="filterCat(this, '')">Todos</button>` +
-    cats.map(c => `<button class="cat ${activeCat === c ? 'active' : ''}" onclick="filterCat(this, '${c}')">${c}</button>`).join('');
+  wrap.innerHTML = `<button class="cat active" onclick="filterCat(this, '')">Todos</button>` +
+    cats.map(c => `<button class="cat" onclick="filterCat(this, '${c}')">${c}</button>`).join('');
 }
 
 function filterCat(btn, cat) {
@@ -173,9 +149,7 @@ function filterCat(btn, cat) {
 
 function filterProducts() {
   const q = document.getElementById('searchInput').value.toLowerCase();
-  let filtered = allProducts.filter(p =>
-    Object.values(p).some(v => String(v).toLowerCase().includes(q))
-  );
+  let filtered = allProducts.filter(p => Object.values(p).some(v => String(v).toLowerCase().includes(q)));
   if (activeCat) filtered = filtered.filter(p => p['Producto'] === activeCat);
   renderList(filtered);
 }
@@ -185,102 +159,81 @@ function showDetail(idx) {
   selectedPhotos = [];
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('detailView').classList.add('active');
-  document.getElementById('detailTitle').textContent = currentProduct['Codigo'] || '';
-  document.getElementById('dNombre').textContent = `${currentProduct['Producto'] || ''} ${currentProduct['Item'] || ''}`;
-  document.getElementById('dCodigo').textContent = `Código: ${currentProduct['Codigo'] || ''}`;
+  document.getElementById('dNombre').textContent = `${currentProduct['Producto']} ${currentProduct['Item']}`;
+  document.getElementById('dCodigo').textContent = `Código: ${currentProduct['Codigo']}`;
 
   const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante'];
   document.getElementById('specsContainer').innerHTML = specs
     .filter(k => currentProduct[k])
-    .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
-    .join('');
+    .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`).join('');
 
   const fotos = ['Foto1','Foto2','Foto3','Foto4'].filter(k => currentProduct[k]);
-  const grid = document.getElementById('photosGrid');
-  if (fotos.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#888;font-size:13px;">Sin fotos cargadas</div>';
-  } else {
-    grid.innerHTML = fotos.map((k, i) => `
-      <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${currentProduct[k]}')">
-        <img src="${currentProduct[k]}" onerror="this.parentElement.style.display='none'" />
-        <div class="photo-check">✓</div>
-      </div>`).join('');
-  }
+  document.getElementById('photosGrid').innerHTML = fotos.map((k, i) => `
+    <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${currentProduct[k]}')">
+      <img src="${currentProduct[k]}" />
+      <div class="photo-check">✓</div>
+    </div>`).join('');
   updateWspBtn();
 }
 
 function togglePhoto(idx, url) {
   const el = document.getElementById(`photo-${idx}`);
   const i = selectedPhotos.indexOf(url);
-  if (i === -1) { 
-    selectedPhotos.push(url); 
-    el.classList.add('selected'); 
-  } else { 
-    selectedPhotos.splice(i, 1); 
-    el.classList.remove('selected'); 
-  }
+  if (i === -1) { selectedPhotos.push(url); el.classList.add('selected'); }
+  else { selectedPhotos.splice(i, 1); el.classList.remove('selected'); }
   updateWspBtn();
 }
 
 function updateWspBtn() {
   const btn = document.getElementById('wspBtn');
-  const hint = document.getElementById('selectHint');
-  if (selectedPhotos.length === 0) {
-    btn.disabled = true;
-    hint.textContent = 'Selecciona las fotos que quieres enviar';
-  } else {
-    btn.disabled = false;
-    hint.textContent = `${selectedPhotos.length} foto(s) seleccionada(s)`;
-  }
+  btn.disabled = selectedPhotos.length === 0;
+  document.getElementById('selectHint').textContent = selectedPhotos.length === 0 ? 'Selecciona fotos' : `${selectedPhotos.length} fotos seleccionadas`;
 }
 
-function copyText() {
-  const p = currentProduct;
-  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nRanuras Polea: ${p['Ranuras Polea'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
-  navigator.clipboard.writeText(text).then(() => {
-    const msg = document.getElementById('copiedMsg');
-    msg.style.display = 'block';
-    setTimeout(() => msg.style.display = 'none', 2500);
-  });
-}
-
-async function shareWhatsApp() {
+// ENVÍO EN UN SOLO PASO (FOTOS + TEXTO)
+async function shareEverything() {
   const p = currentProduct;
   const btn = document.getElementById('wspBtn');
-  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
+  
+  // Texto formateado
+  const text = `*${p['Producto']} ${p['Item']}*\nCód: ${p['Codigo']}\nMarca: ${p['Marca']}\nModelo: ${p['Modelo']}\nVoltaje: ${p['Voltaje']}\nRefrigerante: ${p['Refrigerante']}`;
 
   try {
-    btn.textContent = '⏳ Preparando imágenes...';
+    btn.textContent = '⏳ Procesando...';
     btn.disabled = true;
 
-    // Copiar texto al portapapeles por si acaso
+    // Copiamos al portapapeles de respaldo por si el móvil ignora el texto
     await navigator.clipboard.writeText(text);
 
-    if (selectedPhotos.length > 0 && navigator.canShare) {
-      const filePromises = selectedPhotos.map(async (url, i) => {
-        // Reducimos un poco más la calidad para asegurar rapidez y éxito
-        let finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=70`;
-        
-        const res = await fetch(finalUrl);
-        const blob = await res.blob();
-        return new File([blob], `item_${i+1}.jpg`, { type: 'image/jpeg' });
-      });
+    const filePromises = selectedPhotos.map(async (url, i) => {
+      // Usamos el proxy para asegurar que la imagen se descargue correctamente
+      const finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=70`;
+      const res = await fetch(finalUrl);
+      const blob = await res.blob();
+      return new File([blob], `producto_${i+1}.jpg`, { type: 'image/jpeg' });
+    });
 
-      const files = await Promise.all(filePromises);
+    const files = await Promise.all(filePromises);
 
-      // Compartimos archivos + texto (el texto suele ir como comentario de la foto)
+    if (navigator.share && navigator.canShare({ files: files })) {
       await navigator.share({
         files: files,
-        text: text
+        text: text, // Algunos móviles lo ponen como comentario de la foto
+        title: p['Producto']
       });
+      
+      const msg = document.getElementById('copiedMsg');
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 3000);
     } else {
       throw new Error("No compatible");
     }
   } catch(e) {
-    const links = selectedPhotos.length > 0 ? `\n\nFotos:\n${selectedPhotos.join('\n')}` : '';
+    // Si falla el modo archivo (ej: en PC), abre WhatsApp Web con los links
+    const links = `\n\nFotos:\n${selectedPhotos.join('\n')}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text + links)}`, '_blank');
   } finally {
-    btn.textContent = '💬 Compartir por WhatsApp';
+    btn.textContent = '💬 Enviar por WhatsApp';
     btn.disabled = false;
   }
 }
@@ -288,8 +241,6 @@ async function shareWhatsApp() {
 function goBack() {
   document.getElementById('listView').classList.remove('hidden');
   document.getElementById('detailView').classList.remove('active');
-  currentProduct = null;
-  selectedPhotos = [];
 }
 
 loadProducts();
