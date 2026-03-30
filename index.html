@@ -244,7 +244,6 @@ function copyText() {
   });
 }
 
-// ESTA ES LA FUNCIÓN CLAVE MEJORADA
 async function shareWhatsApp() {
   const p = currentProduct;
   const btn = document.getElementById('wspBtn');
@@ -254,12 +253,18 @@ async function shareWhatsApp() {
     btn.textContent = '⏳ Procesando fotos...';
     btn.disabled = true;
 
-    // Si hay fotos seleccionadas y el navegador soporta compartir archivos
+    // Solo intentamos enviar como ARCHIVO si hay fotos y el móvil lo permite
     if (selectedPhotos.length > 0 && navigator.canShare && navigator.share) {
       const filePromises = selectedPhotos.map(async (url, i) => {
-        const res = await fetch(url);
+        // SOLUCIÓN AL BLOQUEO DE COLDERMAN.CL:
+        // Si no es Imgur, usamos el proxy images.weserv.nl para saltar el CORS
+        let finalUrl = url;
+        if (!url.includes('imgur.com')) {
+          finalUrl = 'https://images.weserv.nl/?url=' + url.replace('https://', '').replace('http://', '');
+        }
+
+        const res = await fetch(finalUrl);
         const blob = await res.blob();
-        // Detectar extensión
         const type = blob.type || 'image/jpeg';
         const ext = type.split('/')[1] || 'jpg';
         return new File([blob], `foto_${i+1}.${ext}`, { type });
@@ -267,17 +272,17 @@ async function shareWhatsApp() {
 
       const files = await Promise.all(filePromises);
 
-      // Intentar compartir como archivos reales
+      // Abrir el menú nativo del móvil para compartir como archivos reales
       await navigator.share({
         text: text,
         files: files
       });
     } else {
-      throw new Error("No compatible con archivos");
+      throw new Error("Modo texto");
     }
   } catch(e) {
-    // Si falla (por ejemplo en PC o navegadores viejos), mandamos solo texto y links
-    console.log("Cambiando a modo texto por error o incompatibilidad");
+    // Si falla (ej. en PC) o si no hay fotos, mandamos link de WhatsApp clásico
+    console.log("Cambiando a modo texto por incompatibilidad");
     const links = selectedPhotos.length > 0 ? `\n\nFotos:\n${selectedPhotos.join('\n')}` : '';
     const finalMsg = text + links;
     window.open(`https://wa.me/?text=${encodeURIComponent(finalMsg)}`);
