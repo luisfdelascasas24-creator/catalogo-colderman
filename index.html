@@ -244,44 +244,47 @@ function copyText() {
   });
 }
 
+// ESTA FUNCIÓN HA SIDO REESCRITA PARA EVITAR EL BLOQUEO DE WHATSAPP
 async function shareWhatsApp() {
   const p = currentProduct;
   const btn = document.getElementById('wspBtn');
+  // Preparamos el texto
   const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
 
   try {
     btn.textContent = '⏳ Preparando imágenes...';
     btn.disabled = true;
 
+    // 1. COPIAMOS EL TEXTO AL PORTAPAPELES AUTOMÁTICAMENTE
+    // Así el vendedor solo tiene que "Pegar" en WhatsApp
+    await navigator.clipboard.writeText(text);
+
     if (selectedPhotos.length > 0 && navigator.canShare) {
       const filePromises = selectedPhotos.map(async (url, i) => {
-        // SOLUCIÓN DEFINITIVA: Usar el proxy para evadir el bloqueo de la web de la empresa
         let finalUrl = url;
         if (!url.includes('imgur.com')) {
-          // El proxy convierte a JPG para asegurar compatibilidad total con WhatsApp
-          finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=80`;
+          finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=85`;
         }
-
         const res = await fetch(finalUrl);
         const blob = await res.blob();
-        
-        // Creamos el archivo real con tipo MIME image/jpeg
         return new File([blob], `producto_${i+1}.jpg`, { type: 'image/jpeg' });
       });
 
       const files = await Promise.all(filePromises);
 
-      // Abrir el menú nativo del celular para compartir archivos reales
+      // 2. ENVIAMOS SOLO LOS ARCHIVOS
+      // Al no enviar texto aquí, forzamos a WhatsApp a abrir el editor de fotos
       await navigator.share({
-        files: files,
-        text: text
+        files: files
       });
+
+      alert("¡Imágenes listas! Ahora selecciona el contacto y PEGA el texto que ya se copió automáticamente.");
+
     } else {
-      throw new Error("Navegador no compatible o sin selección");
+      throw new Error("No compatible");
     }
   } catch(e) {
-    console.error("Fallo al compartir archivos:", e);
-    // PLAN B: WhatsApp clásico si falla el modo "archivo"
+    // Si falla el modo archivo (PC o error), mandamos link tradicional
     const links = selectedPhotos.length > 0 ? `\n\nFotos:\n${selectedPhotos.join('\n')}` : '';
     window.open(`https://wa.me/?text=${encodeURIComponent(text + links)}`, '_blank');
   } finally {
