@@ -282,6 +282,36 @@ function goBack() {
 }
 
 loadProducts();
+  async function compartirProducto(titulo, descripcion, urlsImagenes) {
+  try {
+    const archivosACompartir = [];
+
+    // 1. Convertimos cada URL en un archivo real (Blob)
+    for (let i = 0; i < urlsImagenes.length; i++) {
+      const respuesta = await fetch(urlsImagenes[i]);
+      const blob = await respuesta.blob();
+      const archivo = new File([blob], `producto-${i+1}.jpg`, { type: "image/jpeg" });
+      archivosACompartir.push(archivo);
+    }
+
+    // 2. Verificamos si el móvil permite compartir archivos
+    if (navigator.canShare && navigator.canShare({ files: archivosACompartir })) {
+      await navigator.share({
+        files: archivosACompartir,
+        title: titulo,
+        text: descripcion, // Aquí van los datos del producto
+      });
+      console.log("¡Compartido con éxito!");
+    } else {
+      alert("Tu navegador no soporta compartir archivos. Se enviará como texto.");
+      // Fallback: Si no puede compartir archivos, manda el link normal
+      window.open(`https://wa.me/?text=${encodeURIComponent(descripcion)}`);
+    }
+  } catch (error) {
+    console.error("Error al compartir:", error);
+    alert("Hubo un error al procesar las imágenes.");
+  }
+}
 </script>
 </body>
 </html>
