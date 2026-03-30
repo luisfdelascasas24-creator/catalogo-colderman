@@ -25,43 +25,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .product-list { padding: 8px 12px; display: flex; flex-direction: column; gap: 8px; }
 .count-badge { font-size: 12px; color: #888; padding: 6px 12px; }
 .product-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; cursor: pointer; }
-.product-card:active { background: #f5f5f5; }
 .product-thumb { width: 56px; height: 56px; border-radius: 8px; background: #f0f2f5; object-fit: cover; flex-shrink: 0; }
 .product-info { flex: 1; min-width: 0; }
 .product-name { font-size: 14px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.product-code { font-size: 12px; color: #888; margin-top: 3px; }
+.product-price-list { font-size: 13px; color: #185FA5; font-weight: 700; margin-top: 2px; }
+.product-code { font-size: 11px; color: #888; }
 .arrow { color: #bbb; font-size: 18px; }
 .detail-view { display: none; }
 .detail-view.active { display: block; }
 .list-view.hidden { display: none; }
 .photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px; background: #f0f2f5; }
-.photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s; }
+.photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; }
 .photo-item.selected { border-color: #185FA5; }
 .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .photo-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background: #185FA5; display: none; align-items: center; justify-content: center; color: white; font-size: 12px; }
 .photo-item.selected .photo-check { display: flex; }
 .detail-body { padding: 14px; }
 .detail-name { font-size: 17px; font-weight: 600; color: #222; }
-.detail-code { font-size: 13px; color: #888; margin-top: 3px; margin-bottom: 16px; }
+.detail-price { font-size: 20px; color: #185FA5; font-weight: 800; margin: 8px 0; }
 .spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
 .spec-label { color: #888; }
 .spec-val { color: #222; font-weight: 500; }
 .actions { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.btn-wsp { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #25D366; color: white; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
-.btn-wsp:disabled { background: #b0b0b0; box-shadow: none; }
-.select-hint { font-size: 12px; color: #888; text-align: center; margin-top: 5px; }
-.copied-msg { font-size: 13px; color: #25D366; text-align: center; font-weight: 500; display: none; margin-top: 5px; }
+.btn-wsp { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #25D366; color: white; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-wsp:disabled { background: #b0b0b0; }
 </style>
 </head>
 <body>
 
 <div class="app">
   <div class="list-view" id="listView">
-    <div class="topbar">
-      <span class="topbar-title">📦 Catálogo Colderman</span>
-    </div>
+    <div class="topbar"><span class="topbar-title">📦 Catálogo Colderman</span></div>
     <div class="search-wrap">
-      <input type="text" id="searchInput" placeholder="Buscar producto, marca o código..." oninput="filterProducts()" />
+      <input type="text" id="searchInput" placeholder="Buscar producto o código..." oninput="filterProducts()" />
     </div>
     <div class="cats-wrap" id="catsWrap">
       <button class="cat active" onclick="filterCat(this, '')">Todos</button>
@@ -73,20 +69,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   <div class="detail-view" id="detailView">
     <div class="topbar">
       <button class="back-btn" onclick="goBack()">‹ Volver</button>
-      <span class="topbar-title" id="detailTitle">Detalle</span>
+      <span class="topbar-title">Detalle del Producto</span>
     </div>
     <div class="photos-grid" id="photosGrid"></div>
     <div class="detail-body">
       <p class="detail-name" id="dNombre"></p>
-      <p class="detail-code" id="dCodigo"></p>
+      <p class="detail-price" id="dPrecio"></p>
+      <p style="font-size:12px; color:#888; margin-bottom:10px;" id="dCodigo"></p>
       <div id="specsContainer"></div>
     </div>
     <div class="actions">
-      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>
-        💬 Enviar por WhatsApp
-      </button>
-      <p class="select-hint" id="selectHint">Selecciona fotos para enviar</p>
-      <div class="copied-msg" id="copiedMsg">✓ Texto listo para pegar</div>
+      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>💬 Enviar por WhatsApp</button>
+      <p style="font-size:11px; color:#999; text-align:center;">El texto se copiará automáticamente por si necesitas pegarlo.</p>
     </div>
   </div>
 </div>
@@ -106,7 +100,9 @@ async function loadProducts() {
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const rows = json.table.rows;
-    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4'];
+    // Agregamos 'Precio' en la posición 9 (Columna J)
+    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Precio','Foto2','Foto3','Foto4'];
+    
     allProducts = rows.map(row => {
       const obj = {};
       colNames.forEach((col, i) => {
@@ -116,18 +112,19 @@ async function loadProducts() {
     }).filter(p => p['Codigo'] || p['Producto']);
     renderCats(allProducts);
     renderList(allProducts);
-  } catch(e) { console.error("Error cargando datos:", e); }
+  } catch(e) { console.error(e); }
 }
 
 function renderList(products) {
   const list = document.getElementById('productList');
-  document.getElementById('productCount').textContent = `${products.length} productos disponibles`;
+  document.getElementById('productCount').textContent = `${products.length} productos`;
   list.innerHTML = products.map((p) => `
     <div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
       <img class="product-thumb" src="${p['Foto1']}" onerror="this.src='https://via.placeholder.com/60?text=📦'" />
       <div class="product-info">
         <p class="product-name">${p['Producto']} ${p['Item']}</p>
-        <p class="product-code">${p['Codigo']} · ${p['Marca']}</p>
+        <p class="product-price-list">${p['Precio'] ? '$' + p['Precio'] : 'Consultar precio'}</p>
+        <p class="product-code">Cód: ${p['Codigo']}</p>
       </div>
       <span class="arrow">›</span>
     </div>`).join('');
@@ -159,7 +156,9 @@ function showDetail(idx) {
   selectedPhotos = [];
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('detailView').classList.add('active');
+  
   document.getElementById('dNombre').textContent = `${currentProduct['Producto']} ${currentProduct['Item']}`;
+  document.getElementById('dPrecio').textContent = currentProduct['Precio'] ? '$' + currentProduct['Precio'] : 'Consultar precio';
   document.getElementById('dCodigo').textContent = `Código: ${currentProduct['Codigo']}`;
 
   const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante'];
@@ -187,54 +186,30 @@ function togglePhoto(idx, url) {
 function updateWspBtn() {
   const btn = document.getElementById('wspBtn');
   btn.disabled = selectedPhotos.length === 0;
-  document.getElementById('selectHint').textContent = selectedPhotos.length === 0 ? 'Selecciona fotos' : `${selectedPhotos.length} fotos seleccionadas`;
 }
 
-// ENVÍO EN UN SOLO PASO (FOTOS + TEXTO)
 async function shareEverything() {
   const p = currentProduct;
   const btn = document.getElementById('wspBtn');
-  
-  // Texto formateado
-  const text = `*${p['Producto']} ${p['Item']}*\nCód: ${p['Codigo']}\nMarca: ${p['Marca']}\nModelo: ${p['Modelo']}\nVoltaje: ${p['Voltaje']}\nRefrigerante: ${p['Refrigerante']}`;
+  const text = `*${p['Producto']} ${p['Item']}*\nCód: ${p['Codigo']}\nMarca: ${p['Marca']}\nModelo: ${p['Modelo']}\nPrecio: $${p['Precio']}\n\n_Cotización sujeta a disponibilidad._`;
 
   try {
     btn.textContent = '⏳ Procesando...';
-    btn.disabled = true;
-
-    // Copiamos al portapapeles de respaldo por si el móvil ignora el texto
     await navigator.clipboard.writeText(text);
 
     const filePromises = selectedPhotos.map(async (url, i) => {
-      // Usamos el proxy para asegurar que la imagen se descargue correctamente
       const finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=70`;
       const res = await fetch(finalUrl);
       const blob = await res.blob();
-      return new File([blob], `producto_${i+1}.jpg`, { type: 'image/jpeg' });
+      return new File([blob], `item_${i+1}.jpg`, { type: 'image/jpeg' });
     });
 
     const files = await Promise.all(filePromises);
-
-    if (navigator.share && navigator.canShare({ files: files })) {
-      await navigator.share({
-        files: files,
-        text: text, // Algunos móviles lo ponen como comentario de la foto
-        title: p['Producto']
-      });
-      
-      const msg = document.getElementById('copiedMsg');
-      msg.style.display = 'block';
-      setTimeout(() => msg.style.display = 'none', 3000);
-    } else {
-      throw new Error("No compatible");
-    }
+    await navigator.share({ files: files, text: text });
   } catch(e) {
-    // Si falla el modo archivo (ej: en PC), abre WhatsApp Web con los links
-    const links = `\n\nFotos:\n${selectedPhotos.join('\n')}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text + links)}`, '_blank');
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   } finally {
     btn.textContent = '💬 Enviar por WhatsApp';
-    btn.disabled = false;
   }
 }
 
