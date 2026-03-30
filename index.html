@@ -39,7 +39,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s; }
 .photo-item.selected { border-color: #185FA5; }
 .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photo-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background: #185FA5; display: none; align-items: center; justify-content: center; }
+.photo-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background: #185FA5; display: none; align-items: center; justify-content: center; color: white; font-size: 12px; }
 .photo-item.selected .photo-check { display: flex; }
 .detail-body { padding: 14px; }
 .detail-name { font-size: 17px; font-weight: 600; color: #222; }
@@ -57,7 +57,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .select-hint { font-size: 12px; color: #888; text-align: center; }
 .copied-msg { font-size: 13px; color: #25D366; text-align: center; font-weight: 500; display: none; }
 .empty { padding: 3rem; text-align: center; color: #888; font-size: 14px; }
-.no-photo { display: none; }
 </style>
 </head>
 <body>
@@ -213,8 +212,13 @@ function showDetail(idx) {
 function togglePhoto(idx, url) {
   const el = document.getElementById(`photo-${idx}`);
   const i = selectedPhotos.indexOf(url);
-  if (i === -1) { selectedPhotos.push(url); el.classList.add('selected'); }
-  else { selectedPhotos.splice(i, 1); el.classList.remove('selected'); }
+  if (i === -1) { 
+    selectedPhotos.push(url); 
+    el.classList.add('selected'); 
+  } else { 
+    selectedPhotos.splice(i, 1); 
+    el.classList.remove('selected'); 
+  }
   updateWspBtn();
 }
 
@@ -240,37 +244,46 @@ function copyText() {
   });
 }
 
+// ESTA ES LA FUNCIÓN CLAVE MEJORADA
 async function shareWhatsApp() {
   const p = currentProduct;
+  const btn = document.getElementById('wspBtn');
   const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
 
-  if (navigator.share && selectedPhotos.length > 0) {
-    try {
-      const btn = document.getElementById('wspBtn');
-      btn.textContent = 'Preparando fotos...';
-      btn.disabled = true;
+  try {
+    btn.textContent = '⏳ Procesando fotos...';
+    btn.disabled = true;
 
+    // Si hay fotos seleccionadas y el navegador soporta compartir archivos
+    if (selectedPhotos.length > 0 && navigator.canShare && navigator.share) {
       const filePromises = selectedPhotos.map(async (url, i) => {
         const res = await fetch(url);
         const blob = await res.blob();
-        const ext = blob.type.includes('png') ? 'png' : 'jpg';
-        return new File([blob], `foto_${i+1}.${ext}`, { type: blob.type });
+        // Detectar extensión
+        const type = blob.type || 'image/jpeg';
+        const ext = type.split('/')[1] || 'jpg';
+        return new File([blob], `foto_${i+1}.${ext}`, { type });
       });
 
       const files = await Promise.all(filePromises);
 
-      await navigator.share({ text, files });
-    } catch(e) {
-      const text2 = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(text2)}`);
-    } finally {
-      const btn = document.getElementById('wspBtn');
-      btn.textContent = '💬 Compartir por WhatsApp';
-      btn.disabled = false;
+      // Intentar compartir como archivos reales
+      await navigator.share({
+        text: text,
+        files: files
+      });
+    } else {
+      throw new Error("No compatible con archivos");
     }
-  } else {
-    const text2 = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text2)}`);
+  } catch(e) {
+    // Si falla (por ejemplo en PC o navegadores viejos), mandamos solo texto y links
+    console.log("Cambiando a modo texto por error o incompatibilidad");
+    const links = selectedPhotos.length > 0 ? `\n\nFotos:\n${selectedPhotos.join('\n')}` : '';
+    const finalMsg = text + links;
+    window.open(`https://wa.me/?text=${encodeURIComponent(finalMsg)}`);
+  } finally {
+    btn.textContent = '💬 Compartir por WhatsApp';
+    btn.disabled = false;
   }
 }
 
@@ -282,36 +295,6 @@ function goBack() {
 }
 
 loadProducts();
-  async function compartirProducto(titulo, descripcion, urlsImagenes) {
-  try {
-    const archivosACompartir = [];
-
-    // 1. Convertimos cada URL en un archivo real (Blob)
-    for (let i = 0; i < urlsImagenes.length; i++) {
-      const respuesta = await fetch(urlsImagenes[i]);
-      const blob = await respuesta.blob();
-      const archivo = new File([blob], `producto-${i+1}.jpg`, { type: "image/jpeg" });
-      archivosACompartir.push(archivo);
-    }
-
-    // 2. Verificamos si el móvil permite compartir archivos
-    if (navigator.canShare && navigator.canShare({ files: archivosACompartir })) {
-      await navigator.share({
-        files: archivosACompartir,
-        title: titulo,
-        text: descripcion, // Aquí van los datos del producto
-      });
-      console.log("¡Compartido con éxito!");
-    } else {
-      alert("Tu navegador no soporta compartir archivos. Se enviará como texto.");
-      // Fallback: Si no puede compartir archivos, manda el link normal
-      window.open(`https://wa.me/?text=${encodeURIComponent(descripcion)}`);
-    }
-  } catch (error) {
-    console.error("Error al compartir:", error);
-    alert("Hubo un error al procesar las imágenes.");
-  }
-}
 </script>
 </body>
 </html>
