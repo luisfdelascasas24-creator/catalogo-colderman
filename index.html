@@ -244,47 +244,39 @@ function copyText() {
   });
 }
 
-// ESTA FUNCIÓN HA SIDO REESCRITA PARA EVITAR EL BLOQUEO DE WHATSAPP
 async function shareWhatsApp() {
   const p = currentProduct;
   const btn = document.getElementById('wspBtn');
-  // Preparamos el texto
   const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
 
   try {
     btn.textContent = '⏳ Preparando imágenes...';
     btn.disabled = true;
 
-    // 1. COPIAMOS EL TEXTO AL PORTAPAPELES AUTOMÁTICAMENTE
-    // Así el vendedor solo tiene que "Pegar" en WhatsApp
+    // Copiar texto al portapapeles por si acaso
     await navigator.clipboard.writeText(text);
 
     if (selectedPhotos.length > 0 && navigator.canShare) {
       const filePromises = selectedPhotos.map(async (url, i) => {
-        let finalUrl = url;
-        if (!url.includes('imgur.com')) {
-          finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=85`;
-        }
+        // Reducimos un poco más la calidad para asegurar rapidez y éxito
+        let finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=70`;
+        
         const res = await fetch(finalUrl);
         const blob = await res.blob();
-        return new File([blob], `producto_${i+1}.jpg`, { type: 'image/jpeg' });
+        return new File([blob], `item_${i+1}.jpg`, { type: 'image/jpeg' });
       });
 
       const files = await Promise.all(filePromises);
 
-      // 2. ENVIAMOS SOLO LOS ARCHIVOS
-      // Al no enviar texto aquí, forzamos a WhatsApp a abrir el editor de fotos
+      // Compartimos archivos + texto (el texto suele ir como comentario de la foto)
       await navigator.share({
-        files: files
+        files: files,
+        text: text
       });
-
-      alert("¡Imágenes listas! Ahora selecciona el contacto y PEGA el texto que ya se copió automáticamente.");
-
     } else {
       throw new Error("No compatible");
     }
   } catch(e) {
-    // Si falla el modo archivo (PC o error), mandamos link tradicional
     const links = selectedPhotos.length > 0 ? `\n\nFotos:\n${selectedPhotos.join('\n')}` : '';
     window.open(`https://wa.me/?text=${encodeURIComponent(text + links)}`, '_blank');
   } finally {
