@@ -250,42 +250,40 @@ async function shareWhatsApp() {
   const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
 
   try {
-    btn.textContent = '⏳ Procesando fotos...';
+    btn.textContent = '⏳ Preparando imágenes...';
     btn.disabled = true;
 
-    // Solo intentamos enviar como ARCHIVO si hay fotos y el móvil lo permite
-    if (selectedPhotos.length > 0 && navigator.canShare && navigator.share) {
+    if (selectedPhotos.length > 0 && navigator.canShare) {
       const filePromises = selectedPhotos.map(async (url, i) => {
-        // SOLUCIÓN AL BLOQUEO DE COLDERMAN.CL:
-        // Si no es Imgur, usamos el proxy images.weserv.nl para saltar el CORS
+        // SOLUCIÓN DEFINITIVA: Usar el proxy para evadir el bloqueo de la web de la empresa
         let finalUrl = url;
         if (!url.includes('imgur.com')) {
-          finalUrl = 'https://images.weserv.nl/?url=' + url.replace('https://', '').replace('http://', '');
+          // El proxy convierte a JPG para asegurar compatibilidad total con WhatsApp
+          finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=80`;
         }
 
         const res = await fetch(finalUrl);
         const blob = await res.blob();
-        const type = blob.type || 'image/jpeg';
-        const ext = type.split('/')[1] || 'jpg';
-        return new File([blob], `foto_${i+1}.${ext}`, { type });
+        
+        // Creamos el archivo real con tipo MIME image/jpeg
+        return new File([blob], `producto_${i+1}.jpg`, { type: 'image/jpeg' });
       });
 
       const files = await Promise.all(filePromises);
 
-      // Abrir el menú nativo del móvil para compartir como archivos reales
+      // Abrir el menú nativo del celular para compartir archivos reales
       await navigator.share({
-        text: text,
-        files: files
+        files: files,
+        text: text
       });
     } else {
-      throw new Error("Modo texto");
+      throw new Error("Navegador no compatible o sin selección");
     }
   } catch(e) {
-    // Si falla (ej. en PC) o si no hay fotos, mandamos link de WhatsApp clásico
-    console.log("Cambiando a modo texto por incompatibilidad");
+    console.error("Fallo al compartir archivos:", e);
+    // PLAN B: WhatsApp clásico si falla el modo "archivo"
     const links = selectedPhotos.length > 0 ? `\n\nFotos:\n${selectedPhotos.join('\n')}` : '';
-    const finalMsg = text + links;
-    window.open(`https://wa.me/?text=${encodeURIComponent(finalMsg)}`);
+    window.open(`https://wa.me/?text=${encodeURIComponent(text + links)}`, '_blank');
   } finally {
     btn.textContent = '💬 Compartir por WhatsApp';
     btn.disabled = false;
