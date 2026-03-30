@@ -17,21 +17,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .back-btn { color: #B5D4F4; font-size: 14px; cursor: pointer; background: none; border: none; padding: 0; }
 .search-wrap { padding: 10px 12px; background: #f0f2f5; border-bottom: 1px solid #e0e0e0; }
 .search-wrap input { width: 100%; font-size: 14px; padding: 9px 14px; border-radius: 8px; border: 1px solid #d0d0d0; background: white; color: #333; outline: none; }
-.search-wrap input:focus { border-color: #185FA5; }
 .cats-wrap { display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; border-bottom: 1px solid #e0e0e0; scrollbar-width: none; }
 .cats-wrap::-webkit-scrollbar { display: none; }
 .cat { font-size: 12px; padding: 5px 12px; border-radius: 20px; white-space: nowrap; font-weight: 500; cursor: pointer; border: 1px solid #d0d0d0; background: white; color: #555; }
 .cat.active { background: #185FA5; color: white; border-color: #185FA5; }
 .product-list { padding: 8px 12px; display: flex; flex-direction: column; gap: 8px; }
-.count-badge { font-size: 12px; color: #888; padding: 6px 12px; }
 .product-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; cursor: pointer; }
-.product-thumb { width: 56px; height: 56px; border-radius: 8px; background: #f0f2f5; object-fit: cover; flex-shrink: 0; }
+.product-thumb { width: 64px; height: 64px; border-radius: 8px; background: #f0f2f5; object-fit: cover; flex-shrink: 0; }
 .product-info { flex: 1; min-width: 0; }
-.product-name { font-size: 14px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.product-price-list { font-size: 13px; color: #185FA5; font-weight: 700; margin-top: 2px; }
+.product-name { font-size: 14px; font-weight: 600; color: #222; }
+.product-price-list { font-size: 15px; color: #185FA5; font-weight: 800; margin: 2px 0; }
 .product-code { font-size: 11px; color: #888; }
-.arrow { color: #bbb; font-size: 18px; }
-.detail-view { display: none; }
+.detail-view { display: none; padding-bottom: 30px; }
 .detail-view.active { display: block; }
 .list-view.hidden { display: none; }
 .photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px; background: #f0f2f5; }
@@ -40,15 +37,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .photo-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background: #185FA5; display: none; align-items: center; justify-content: center; color: white; font-size: 12px; }
 .photo-item.selected .photo-check { display: flex; }
-.detail-body { padding: 14px; }
-.detail-name { font-size: 17px; font-weight: 600; color: #222; }
-.detail-price { font-size: 20px; color: #185FA5; font-weight: 800; margin: 8px 0; }
-.spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+.detail-body { padding: 16px; }
+.detail-name { font-size: 18px; font-weight: 700; color: #222; }
+.detail-price-box { background: #E6F1FB; padding: 12px; border-radius: 10px; margin: 12px 0; }
+.detail-price-label { font-size: 12px; color: #185FA5; font-weight: 600; text-transform: uppercase; }
+.detail-price-val { font-size: 24px; color: #185FA5; font-weight: 800; }
+.spec-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
 .spec-label { color: #888; }
-.spec-val { color: #222; font-weight: 500; }
-.actions { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.btn-wsp { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #25D366; color: white; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-.btn-wsp:disabled { background: #b0b0b0; }
+.spec-val { color: #222; font-weight: 600; }
+.actions { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.btn-wsp { width: 100%; padding: 16px; border-radius: 12px; border: none; background: #25D366; color: white; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 10px rgba(37,211,102,0.3); }
+.btn-wsp:disabled { background: #ccc; box-shadow: none; }
 </style>
 </head>
 <body>
@@ -57,30 +56,33 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   <div class="list-view" id="listView">
     <div class="topbar"><span class="topbar-title">📦 Catálogo Colderman</span></div>
     <div class="search-wrap">
-      <input type="text" id="searchInput" placeholder="Buscar producto o código..." oninput="filterProducts()" />
+      <input type="text" id="searchInput" placeholder="Buscar por código, marca o nombre..." oninput="filterProducts()" />
     </div>
     <div class="cats-wrap" id="catsWrap">
       <button class="cat active" onclick="filterCat(this, '')">Todos</button>
     </div>
-    <div id="productCount" class="count-badge"></div>
+    <div id="productCount" style="padding: 10px 16px; font-size: 12px; color: #888;">Cargando...</div>
     <div id="productList" class="product-list"></div>
   </div>
 
   <div class="detail-view" id="detailView">
     <div class="topbar">
       <button class="back-btn" onclick="goBack()">‹ Volver</button>
-      <span class="topbar-title">Detalle del Producto</span>
+      <span class="topbar-title">Información Técnica</span>
     </div>
     <div class="photos-grid" id="photosGrid"></div>
     <div class="detail-body">
       <p class="detail-name" id="dNombre"></p>
-      <p class="detail-price" id="dPrecio"></p>
-      <p style="font-size:12px; color:#888; margin-bottom:10px;" id="dCodigo"></p>
+      <div class="detail-price-box">
+        <p class="detail-price-label">Precio Sugerido</p>
+        <p class="detail-price-val" id="dPrecio"></p>
+      </div>
+      <p id="dCodigo" style="font-size:12px; color:#999; margin-bottom:15px;"></p>
       <div id="specsContainer"></div>
     </div>
     <div class="actions">
-      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>💬 Enviar por WhatsApp</button>
-      <p style="font-size:11px; color:#999; text-align:center;">El texto se copiará automáticamente por si necesitas pegarlo.</p>
+      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>💬 Enviar Cotización</button>
+      <p style="font-size:11px; color:#999; text-align:center;">Selecciona fotos para enviar. El precio se incluye en el mensaje.</p>
     </div>
   </div>
 </div>
@@ -99,34 +101,37 @@ async function loadProducts() {
     const res = await fetch(URL);
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
-    // Agregamos 'Precio' en la posición 9 (Columna J)
-    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Precio','Foto2','Foto3','Foto4'];
     
-    allProducts = rows.map(row => {
-      const obj = {};
-      colNames.forEach((col, i) => {
-        obj[col] = row.c[i] ? (String(row.c[i].v) || '') : '';
+    // Mapeo automático por nombre de columna
+    const cols = json.table.cols.map(c => c.label);
+    allProducts = json.table.rows.map(row => {
+      const p = {};
+      row.c.forEach((cell, i) => {
+        if (cols[i]) p[cols[i]] = cell ? String(cell.v) : '';
       });
-      return obj;
+      return p;
     }).filter(p => p['Codigo'] || p['Producto']);
+
     renderCats(allProducts);
     renderList(allProducts);
-  } catch(e) { console.error(e); }
+  } catch(e) { 
+    console.error(e);
+    document.getElementById('productList').innerHTML = "<p style='padding:20px;'>Error al cargar datos. Revisa el Excel.</p>";
+  }
 }
 
 function renderList(products) {
   const list = document.getElementById('productList');
-  document.getElementById('productCount').textContent = `${products.length} productos`;
-  list.innerHTML = products.map((p) => `
+  document.getElementById('productCount').textContent = `${products.length} productos encontrados`;
+  list.innerHTML = products.map((p, idx) => `
     <div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
-      <img class="product-thumb" src="${p['Foto1']}" onerror="this.src='https://via.placeholder.com/60?text=📦'" />
+      <img class="product-thumb" src="${p['Foto1'] || ''}" onerror="this.src='https://via.placeholder.com/80?text=📦'" />
       <div class="product-info">
-        <p class="product-name">${p['Producto']} ${p['Item']}</p>
-        <p class="product-price-list">${p['Precio'] ? '$' + p['Precio'] : 'Consultar precio'}</p>
-        <p class="product-code">Cód: ${p['Codigo']}</p>
+        <p class="product-name">${p['Producto'] || ''} ${p['Item'] || ''}</p>
+        <p class="product-price-list">${p['Precio'] ? '$ ' + Number(p['Precio']).toLocaleString('es-CL') : 'Consultar'}</p>
+        <p class="product-code">Cód: ${p['Codigo'] || 'S/N'}</p>
       </div>
-      <span class="arrow">›</span>
+      <span style="color:#ccc;">›</span>
     </div>`).join('');
 }
 
@@ -158,8 +163,8 @@ function showDetail(idx) {
   document.getElementById('detailView').classList.add('active');
   
   document.getElementById('dNombre').textContent = `${currentProduct['Producto']} ${currentProduct['Item']}`;
-  document.getElementById('dPrecio').textContent = currentProduct['Precio'] ? '$' + currentProduct['Precio'] : 'Consultar precio';
-  document.getElementById('dCodigo').textContent = `Código: ${currentProduct['Codigo']}`;
+  document.getElementById('dPrecio').textContent = currentProduct['Precio'] ? '$ ' + Number(currentProduct['Precio']).toLocaleString('es-CL') : 'A convenir';
+  document.getElementById('dCodigo').textContent = `Código Interno: ${currentProduct['Codigo']}`;
 
   const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante'];
   document.getElementById('specsContainer').innerHTML = specs
@@ -184,17 +189,18 @@ function togglePhoto(idx, url) {
 }
 
 function updateWspBtn() {
-  const btn = document.getElementById('wspBtn');
-  btn.disabled = selectedPhotos.length === 0;
+  document.getElementById('wspBtn').disabled = selectedPhotos.length === 0;
 }
 
 async function shareEverything() {
   const p = currentProduct;
   const btn = document.getElementById('wspBtn');
-  const text = `*${p['Producto']} ${p['Item']}*\nCód: ${p['Codigo']}\nMarca: ${p['Marca']}\nModelo: ${p['Modelo']}\nPrecio: $${p['Precio']}\n\n_Cotización sujeta a disponibilidad._`;
+  const priceText = p['Precio'] ? `$${Number(p['Precio']).toLocaleString('es-CL')}` : 'Consultar';
+  
+  const text = `*${p['Producto']} ${p['Item']}*\nCódigo: ${p['Codigo']}\nMarca: ${p['Marca']}\nPrecio: ${priceText}\n\n_Enviado desde Catálogo Colderman_`;
 
   try {
-    btn.textContent = '⏳ Procesando...';
+    btn.textContent = '⏳ Preparando...';
     await navigator.clipboard.writeText(text);
 
     const filePromises = selectedPhotos.map(async (url, i) => {
@@ -209,13 +215,14 @@ async function shareEverything() {
   } catch(e) {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   } finally {
-    btn.textContent = '💬 Enviar por WhatsApp';
+    btn.textContent = '💬 Enviar Cotización';
   }
 }
 
 function goBack() {
   document.getElementById('listView').classList.remove('hidden');
   document.getElementById('detailView').classList.remove('active');
+  window.scrollTo(0,0);
 }
 
 loadProducts();
