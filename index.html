@@ -17,72 +17,89 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .back-btn { color: #B5D4F4; font-size: 14px; cursor: pointer; background: none; border: none; padding: 0; }
 .search-wrap { padding: 10px 12px; background: #f0f2f5; border-bottom: 1px solid #e0e0e0; }
 .search-wrap input { width: 100%; font-size: 14px; padding: 9px 14px; border-radius: 8px; border: 1px solid #d0d0d0; background: white; color: #333; outline: none; }
+.search-wrap input:focus { border-color: #185FA5; }
 .cats-wrap { display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; border-bottom: 1px solid #e0e0e0; scrollbar-width: none; }
 .cats-wrap::-webkit-scrollbar { display: none; }
 .cat { font-size: 12px; padding: 5px 12px; border-radius: 20px; white-space: nowrap; font-weight: 500; cursor: pointer; border: 1px solid #d0d0d0; background: white; color: #555; }
 .cat.active { background: #185FA5; color: white; border-color: #185FA5; }
 .product-list { padding: 8px 12px; display: flex; flex-direction: column; gap: 8px; }
+.count-badge { font-size: 12px; color: #888; padding: 6px 12px; }
 .product-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; cursor: pointer; }
-.product-thumb { width: 64px; height: 64px; border-radius: 8px; background: #f0f2f5; object-fit: cover; flex-shrink: 0; }
+.product-card:active { background: #f5f5f5; }
+.product-thumb { width: 56px; height: 56px; border-radius: 8px; background: #f0f2f5; object-fit: cover; flex-shrink: 0; }
+.product-thumb-placeholder { width: 56px; height: 56px; border-radius: 8px; background: #f0f2f5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #bbb; font-size: 22px; }
 .product-info { flex: 1; min-width: 0; }
-.product-name { font-size: 14px; font-weight: 600; color: #222; }
-.product-price-list { font-size: 15px; color: #185FA5; font-weight: 800; margin: 2px 0; }
-.product-code { font-size: 11px; color: #888; }
-.detail-view { display: none; padding-bottom: 30px; }
+.product-name { font-size: 14px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.product-code { font-size: 12px; color: #888; margin-top: 3px; }
+.arrow { color: #bbb; font-size: 18px; }
+.detail-view { display: none; }
 .detail-view.active { display: block; }
 .list-view.hidden { display: none; }
 .photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px; background: #f0f2f5; }
-.photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; }
+.photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s; }
 .photo-item.selected { border-color: #185FA5; }
 .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photo-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background: #185FA5; display: none; align-items: center; justify-content: center; color: white; font-size: 12px; }
+.photo-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background: #185FA5; display: none; align-items: center; justify-content: center; }
 .photo-item.selected .photo-check { display: flex; }
-.detail-body { padding: 16px; }
-.detail-name { font-size: 18px; font-weight: 700; color: #222; }
-.detail-price-box { background: #E6F1FB; padding: 12px; border-radius: 10px; margin: 12px 0; }
-.detail-price-label { font-size: 12px; color: #185FA5; font-weight: 600; text-transform: uppercase; }
-.detail-price-val { font-size: 24px; color: #185FA5; font-weight: 800; }
-.spec-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+.detail-body { padding: 14px; }
+.detail-name { font-size: 17px; font-weight: 600; color: #222; }
+.detail-code { font-size: 13px; color: #888; margin-top: 3px; margin-bottom: 16px; }
+.specs-title { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
 .spec-label { color: #888; }
-.spec-val { color: #222; font-weight: 600; }
-.actions { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-.btn-wsp { width: 100%; padding: 16px; border-radius: 12px; border: none; background: #25D366; color: white; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 10px rgba(37,211,102,0.3); }
-.btn-wsp:disabled { background: #ccc; box-shadow: none; }
+.spec-val { color: #222; font-weight: 500; }
+.actions { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.btn-copy { width: 100%; padding: 13px; border-radius: 10px; border: 1.5px solid #185FA5; background: #E6F1FB; color: #0C447C; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-copy:active { background: #B5D4F4; }
+.btn-wsp { width: 100%; padding: 13px; border-radius: 10px; border: none; background: #25D366; color: white; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-wsp:active { background: #1da851; }
+.btn-wsp:disabled { background: #b0b0b0; cursor: not-allowed; }
+.select-hint { font-size: 12px; color: #888; text-align: center; }
+.copied-msg { font-size: 13px; color: #25D366; text-align: center; font-weight: 500; display: none; }
+.empty { padding: 3rem; text-align: center; color: #888; font-size: 14px; }
+.no-photo { display: none; }
 </style>
 </head>
 <body>
 
 <div class="app">
   <div class="list-view" id="listView">
-    <div class="topbar"><span class="topbar-title">📦 Catálogo Colderman</span></div>
+    <div class="topbar">
+      <span class="topbar-title">📦 Catálogo Colderman</span>
+    </div>
     <div class="search-wrap">
-      <input type="text" id="searchInput" placeholder="Buscar por código, marca o nombre..." oninput="filterProducts()" />
+      <input type="text" id="searchInput" placeholder="Buscar por código, producto o marca..." oninput="filterProducts()" />
     </div>
     <div class="cats-wrap" id="catsWrap">
-      <button class="cat active" onclick="filterCat(this, '')">Todos</button>
+      <button class="cat active" onclick="filterCat(this, '')" >Todos</button>
     </div>
-    <div id="productCount" style="padding: 10px 16px; font-size: 12px; color: #888;">Cargando...</div>
-    <div id="productList" class="product-list"></div>
+    <div id="productCount" class="count-badge"></div>
+    <div id="productList" class="product-list">
+      <div class="loading">Cargando productos...</div>
+    </div>
   </div>
 
   <div class="detail-view" id="detailView">
     <div class="topbar">
       <button class="back-btn" onclick="goBack()">‹ Volver</button>
-      <span class="topbar-title">Información Técnica</span>
+      <span class="topbar-title" id="detailTitle"></span>
     </div>
     <div class="photos-grid" id="photosGrid"></div>
     <div class="detail-body">
       <p class="detail-name" id="dNombre"></p>
-      <div class="detail-price-box">
-        <p class="detail-price-label">Precio Sugerido</p>
-        <p class="detail-price-val" id="dPrecio"></p>
-      </div>
-      <p id="dCodigo" style="font-size:12px; color:#999; margin-bottom:15px;"></p>
+      <p class="detail-code" id="dCodigo"></p>
+      <p class="specs-title">Especificaciones</p>
       <div id="specsContainer"></div>
     </div>
     <div class="actions">
-      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>💬 Enviar Cotización</button>
-      <p style="font-size:11px; color:#999; text-align:center;">Selecciona fotos para enviar. El precio se incluye en el mensaje.</p>
+      <button class="btn-copy" onclick="copyText()">
+        📋 Copiar datos del producto
+      </button>
+      <div class="copied-msg" id="copiedMsg">✓ Datos copiados al portapapeles</div>
+      <button class="btn-wsp" id="wspBtn" onclick="shareWhatsApp()" disabled>
+        💬 Compartir por WhatsApp
+      </button>
+      <p class="select-hint" id="selectHint">Selecciona las fotos que quieres enviar</p>
     </div>
   </div>
 </div>
@@ -101,45 +118,52 @@ async function loadProducts() {
     const res = await fetch(URL);
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
-    
-    // Mapeo automático por nombre de columna
-    const cols = json.table.cols.map(c => c.label);
-    allProducts = json.table.rows.map(row => {
-      const p = {};
-      row.c.forEach((cell, i) => {
-        if (cols[i]) p[cols[i]] = cell ? String(cell.v) : '';
+    const rows = json.table.rows;
+    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Precio','Stock'];
+    allProducts = rows.map(row => {
+      const obj = {};
+      colNames.forEach((col, i) => {
+        obj[col] = row.c[i] ? (String(row.c[i].v) || '') : '';
       });
-      return p;
+      return obj;
     }).filter(p => p['Codigo'] || p['Producto']);
-
     renderCats(allProducts);
     renderList(allProducts);
-  } catch(e) { 
-    console.error(e);
-    document.getElementById('productList').innerHTML = "<p style='padding:20px;'>Error al cargar datos. Revisa el Excel.</p>";
+  } catch(e) {
+    document.getElementById('productList').innerHTML = '<div class="empty">Error cargando productos.</div>';
   }
 }
 
 function renderList(products) {
   const list = document.getElementById('productList');
-  document.getElementById('productCount').textContent = `${products.length} productos encontrados`;
-  list.innerHTML = products.map((p, idx) => `
-    <div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
-      <img class="product-thumb" src="${p['Foto1'] || ''}" onerror="this.src='https://via.placeholder.com/80?text=📦'" />
+  const count = document.getElementById('productCount');
+  count.textContent = `${products.length} productos`;
+  if (products.length === 0) {
+    list.innerHTML = '<div class="empty">No se encontraron productos</div>';
+    return;
+  }
+  list.innerHTML = products.map((p) => {
+    const foto = p['Foto1'] || '';
+    const thumb = foto
+      ? `<img class="product-thumb" src="${foto}" onerror="this.style.display='none'" />`
+      : `<div class="product-thumb-placeholder">📦</div>`;
+    return `<div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
+      ${thumb}
       <div class="product-info">
         <p class="product-name">${p['Producto'] || ''} ${p['Item'] || ''}</p>
-        <p class="product-price-list">${p['Precio'] ? '$ ' + Number(p['Precio']).toLocaleString('es-CL') : 'Consultar'}</p>
-        <p class="product-code">Cód: ${p['Codigo'] || 'S/N'}</p>
+        <p class="product-code">Cód: ${p['Codigo'] || ''} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
+        ${p['Stock'] && p['Stock'] !== '0' ? `<p style="font-size:11px;color:#25a244;margin-top:2px;">Stock: ${p['Stock']}</p>` : ''}
       </div>
-      <span style="color:#ccc;">›</span>
-    </div>`).join('');
+      <span class="arrow">›</span>
+    </div>`;
+  }).join('');
 }
 
 function renderCats(products) {
   const cats = [...new Set(products.map(p => p['Producto']).filter(Boolean))].sort();
   const wrap = document.getElementById('catsWrap');
-  wrap.innerHTML = `<button class="cat active" onclick="filterCat(this, '')">Todos</button>` +
-    cats.map(c => `<button class="cat" onclick="filterCat(this, '${c}')">${c}</button>`).join('');
+  wrap.innerHTML = `<button class="cat ${activeCat === '' ? 'active' : ''}" onclick="filterCat(this, '')">Todos</button>` +
+    cats.map(c => `<button class="cat ${activeCat === c ? 'active' : ''}" onclick="filterCat(this, '${c}')">${c}</button>`).join('');
 }
 
 function filterCat(btn, cat) {
@@ -151,7 +175,9 @@ function filterCat(btn, cat) {
 
 function filterProducts() {
   const q = document.getElementById('searchInput').value.toLowerCase();
-  let filtered = allProducts.filter(p => Object.values(p).some(v => String(v).toLowerCase().includes(q)));
+  let filtered = allProducts.filter(p =>
+    Object.values(p).some(v => String(v).toLowerCase().includes(q))
+  );
   if (activeCat) filtered = filtered.filter(p => p['Producto'] === activeCat);
   renderList(filtered);
 }
@@ -161,22 +187,38 @@ function showDetail(idx) {
   selectedPhotos = [];
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('detailView').classList.add('active');
-  
-  document.getElementById('dNombre').textContent = `${currentProduct['Producto']} ${currentProduct['Item']}`;
-  document.getElementById('dPrecio').textContent = currentProduct['Precio'] ? '$ ' + Number(currentProduct['Precio']).toLocaleString('es-CL') : 'A convenir';
-  document.getElementById('dCodigo').textContent = `Código Interno: ${currentProduct['Codigo']}`;
+  document.getElementById('detailTitle').textContent = currentProduct['Codigo'] || '';
+  document.getElementById('dNombre').textContent = `${currentProduct['Producto'] || ''} ${currentProduct['Item'] || ''}`;
+  document.getElementById('dCodigo').textContent = `Código: ${currentProduct['Codigo'] || ''}`;
 
   const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante'];
-  document.getElementById('specsContainer').innerHTML = specs
+  let specsHtml = specs
     .filter(k => currentProduct[k])
-    .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`).join('');
+    .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
+    .join('');
+
+  if (currentProduct['Precio'] && currentProduct['Precio'] !== '0') {
+    specsHtml += `<div class="spec-row"><span class="spec-label">Precio</span><span class="spec-val" style="color:#185FA5;">$${Number(currentProduct['Precio']).toLocaleString('es-CL')}</span></div>`;
+  }
+  if (currentProduct['Stock'] !== undefined && currentProduct['Stock'] !== '') {
+    const stock = Number(currentProduct['Stock']);
+    const stockColor = stock > 0 ? '#25a244' : '#e24b4a';
+    const stockText = stock > 0 ? `${stock} disponibles` : 'Sin stock';
+    specsHtml += `<div class="spec-row"><span class="spec-label">Stock</span><span class="spec-val" style="color:${stockColor};">${stockText}</span></div>`;
+  }
+  document.getElementById('specsContainer').innerHTML = specsHtml;
 
   const fotos = ['Foto1','Foto2','Foto3','Foto4'].filter(k => currentProduct[k]);
-  document.getElementById('photosGrid').innerHTML = fotos.map((k, i) => `
-    <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${currentProduct[k]}')">
-      <img src="${currentProduct[k]}" />
-      <div class="photo-check">✓</div>
-    </div>`).join('');
+  const grid = document.getElementById('photosGrid');
+  if (fotos.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#888;font-size:13px;">Sin fotos cargadas</div>';
+  } else {
+    grid.innerHTML = fotos.map((k, i) => `
+      <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${currentProduct[k]}')">
+        <img src="${currentProduct[k]}" onerror="this.parentElement.style.display='none'" />
+        <div class="photo-check">✓</div>
+      </div>`).join('');
+  }
   updateWspBtn();
 }
 
@@ -189,40 +231,66 @@ function togglePhoto(idx, url) {
 }
 
 function updateWspBtn() {
-  document.getElementById('wspBtn').disabled = selectedPhotos.length === 0;
+  const btn = document.getElementById('wspBtn');
+  const hint = document.getElementById('selectHint');
+  if (selectedPhotos.length === 0) {
+    btn.disabled = true;
+    hint.textContent = 'Selecciona las fotos que quieres enviar';
+  } else {
+    btn.disabled = false;
+    hint.textContent = `${selectedPhotos.length} foto(s) seleccionada(s)`;
+  }
 }
 
-async function shareEverything() {
+function copyText() {
   const p = currentProduct;
-  const btn = document.getElementById('wspBtn');
-  const priceText = p['Precio'] ? `$${Number(p['Precio']).toLocaleString('es-CL')}` : 'Consultar';
-  
-  const text = `*${p['Producto']} ${p['Item']}*\nCódigo: ${p['Codigo']}\nMarca: ${p['Marca']}\nPrecio: ${priceText}\n\n_Enviado desde Catálogo Colderman_`;
+  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nRanuras Polea: ${p['Ranuras Polea'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const msg = document.getElementById('copiedMsg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 2500);
+  });
+}
 
-  try {
-    btn.textContent = '⏳ Preparando...';
-    await navigator.clipboard.writeText(text);
+async function shareWhatsApp() {
+  const p = currentProduct;
+  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
 
-    const filePromises = selectedPhotos.map(async (url, i) => {
-      const finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=70`;
-      const res = await fetch(finalUrl);
-      const blob = await res.blob();
-      return new File([blob], `item_${i+1}.jpg`, { type: 'image/jpeg' });
-    });
+  if (navigator.share && selectedPhotos.length > 0) {
+    try {
+      const btn = document.getElementById('wspBtn');
+      btn.textContent = 'Preparando fotos...';
+      btn.disabled = true;
 
-    const files = await Promise.all(filePromises);
-    await navigator.share({ files: files, text: text });
-  } catch(e) {
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-  } finally {
-    btn.textContent = '💬 Enviar Cotización';
+      const filePromises = selectedPhotos.map(async (url, i) => {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const ext = blob.type.includes('png') ? 'png' : 'jpg';
+        return new File([blob], `foto_${i+1}.${ext}`, { type: blob.type });
+      });
+
+      const files = await Promise.all(filePromises);
+
+      await navigator.share({ text, files });
+    } catch(e) {
+      const text2 = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text2)}`);
+    } finally {
+      const btn = document.getElementById('wspBtn');
+      btn.textContent = '💬 Compartir por WhatsApp';
+      btn.disabled = false;
+    }
+  } else {
+    const text2 = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text2)}`);
   }
 }
 
 function goBack() {
   document.getElementById('listView').classList.remove('hidden');
   document.getElementById('detailView').classList.remove('active');
-  window.scrollTo(0,0);
+  currentProduct = null;
+  selectedPhotos = [];
 }
 
 loadProducts();
