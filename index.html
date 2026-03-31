@@ -31,6 +31,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .product-info { flex: 1; min-width: 0; }
 .product-name { font-size: 14px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .product-code { font-size: 12px; color: #888; margin-top: 3px; }
+.product-stock { font-size: 11px; color: #25a244; margin-top: 2px; }
 .arrow { color: #bbb; font-size: 18px; }
 .detail-view { display: none; }
 .detail-view.active { display: block; }
@@ -39,7 +40,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s; }
 .photo-item.selected { border-color: #185FA5; }
 .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photo-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background: #185FA5; display: none; align-items: center; justify-content: center; }
+.photo-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background: #185FA5; display: none; align-items: center; justify-content: center; color: white; font-size: 12px; }
 .photo-item.selected .photo-check { display: flex; }
 .detail-body { padding: 14px; }
 .detail-name { font-size: 17px; font-weight: 600; color: #222; }
@@ -49,15 +50,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .spec-label { color: #888; }
 .spec-val { color: #222; font-weight: 500; }
 .actions { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.btn-copy { width: 100%; padding: 13px; border-radius: 10px; border: 1.5px solid #185FA5; background: #E6F1FB; color: #0C447C; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-copy { width: 100%; padding: 11px; border-radius: 10px; border: 1.5px solid #185FA5; background: #E6F1FB; color: #0C447C; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-copy:active { background: #B5D4F4; }
-.btn-wsp { width: 100%; padding: 13px; border-radius: 10px; border: none; background: #25D366; color: white; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-wsp { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #25D366; color: white; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-wsp:disabled { background: #b0b0b0; }
 .btn-wsp:active { background: #1da851; }
-.btn-wsp:disabled { background: #b0b0b0; cursor: not-allowed; }
 .select-hint { font-size: 12px; color: #888; text-align: center; }
 .copied-msg { font-size: 13px; color: #25D366; text-align: center; font-weight: 500; display: none; }
 .empty { padding: 3rem; text-align: center; color: #888; font-size: 14px; }
-.no-photo { display: none; }
+.loading { padding: 3rem; text-align: center; color: #888; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -71,7 +72,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <input type="text" id="searchInput" placeholder="Buscar por código, producto o marca..." oninput="filterProducts()" />
     </div>
     <div class="cats-wrap" id="catsWrap">
-      <button class="cat active" onclick="filterCat(this, '')" >Todos</button>
+      <button class="cat active" onclick="filterCat(this, '')">Todos</button>
     </div>
     <div id="productCount" class="count-badge"></div>
     <div id="productList" class="product-list">
@@ -96,8 +97,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         📋 Copiar datos del producto
       </button>
       <div class="copied-msg" id="copiedMsg">✓ Datos copiados al portapapeles</div>
-      <button class="btn-wsp" id="wspBtn" onclick="shareWhatsApp()" disabled>
-        💬 Compartir por WhatsApp
+      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>
+        💬 Enviar por WhatsApp
       </button>
       <p class="select-hint" id="selectHint">Selecciona las fotos que quieres enviar</p>
     </div>
@@ -147,12 +148,14 @@ function renderList(products) {
     const thumb = foto
       ? `<img class="product-thumb" src="${foto}" onerror="this.style.display='none'" />`
       : `<div class="product-thumb-placeholder">📦</div>`;
+    const stock = p['Stock'] && p['Stock'] !== '0' && p['Stock'] !== 'null'
+      ? `<p class="product-stock">Stock: ${p['Stock']}</p>` : '';
     return `<div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
       ${thumb}
       <div class="product-info">
         <p class="product-name">${p['Producto'] || ''} ${p['Item'] || ''}</p>
         <p class="product-code">Cód: ${p['Codigo'] || ''} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
-        ${p['Stock'] && p['Stock'] !== '0' ? `<p style="font-size:11px;color:#25a244;margin-top:2px;">Stock: ${p['Stock']}</p>` : ''}
+        ${stock}
       </div>
       <span class="arrow">›</span>
     </div>`;
@@ -193,14 +196,14 @@ function showDetail(idx) {
 
   const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante'];
   let specsHtml = specs
-    .filter(k => currentProduct[k])
+    .filter(k => currentProduct[k] && currentProduct[k] !== 'null')
     .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
     .join('');
 
-  if (currentProduct['Precio'] && currentProduct['Precio'] !== '0') {
+  if (currentProduct['Precio'] && currentProduct['Precio'] !== '0' && currentProduct['Precio'] !== 'null') {
     specsHtml += `<div class="spec-row"><span class="spec-label">Precio</span><span class="spec-val" style="color:#185FA5;">$${Number(currentProduct['Precio']).toLocaleString('es-CL')}</span></div>`;
   }
-  if (currentProduct['Stock'] !== undefined && currentProduct['Stock'] !== '') {
+  if (currentProduct['Stock'] !== undefined && currentProduct['Stock'] !== '' && currentProduct['Stock'] !== 'null') {
     const stock = Number(currentProduct['Stock']);
     const stockColor = stock > 0 ? '#25a244' : '#e24b4a';
     const stockText = stock > 0 ? `${stock} disponibles` : 'Sin stock';
@@ -208,7 +211,7 @@ function showDetail(idx) {
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  const fotos = ['Foto1','Foto2','Foto3','Foto4'].filter(k => currentProduct[k]);
+  const fotos = ['Foto1','Foto2','Foto3','Foto4'].filter(k => currentProduct[k] && currentProduct[k] !== 'null');
   const grid = document.getElementById('photosGrid');
   if (fotos.length === 0) {
     grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#888;font-size:13px;">Sin fotos cargadas</div>';
@@ -252,37 +255,40 @@ function copyText() {
   });
 }
 
-async function shareWhatsApp() {
+async function shareEverything() {
   const p = currentProduct;
+  const btn = document.getElementById('wspBtn');
   const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
 
-  if (navigator.share && selectedPhotos.length > 0) {
-    try {
-      const btn = document.getElementById('wspBtn');
-      btn.textContent = 'Preparando fotos...';
-      btn.disabled = true;
+  try {
+    btn.textContent = '⏳ Procesando...';
+    btn.disabled = true;
 
-      const filePromises = selectedPhotos.map(async (url, i) => {
-        const res = await fetch(url);
-        const blob = await res.blob();
-        const ext = blob.type.includes('png') ? 'png' : 'jpg';
-        return new File([blob], `foto_${i+1}.${ext}`, { type: blob.type });
-      });
+    await navigator.clipboard.writeText(text);
 
-      const files = await Promise.all(filePromises);
+    const filePromises = selectedPhotos.map(async (url, i) => {
+      const finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=70`;
+      const res = await fetch(finalUrl);
+      const blob = await res.blob();
+      return new File([blob], `producto_${i+1}.jpg`, { type: 'image/jpeg' });
+    });
 
-      await navigator.share({ text, files });
-    } catch(e) {
-      const text2 = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(text2)}`);
-    } finally {
-      const btn = document.getElementById('wspBtn');
-      btn.textContent = '💬 Compartir por WhatsApp';
-      btn.disabled = false;
+    const files = await Promise.all(filePromises);
+
+    if (navigator.share && navigator.canShare({ files })) {
+      await navigator.share({ files, text, title: p['Producto'] });
+      const msg = document.getElementById('copiedMsg');
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 3000);
+    } else {
+      throw new Error("No compatible");
     }
-  } else {
-    const text2 = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}\n\nFotos:\n${selectedPhotos.join('\n')}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text2)}`);
+  } catch(e) {
+    const links = `\n\nFotos:\n${selectedPhotos.join('\n')}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text + links)}`, '_blank');
+  } finally {
+    btn.textContent = '💬 Enviar por WhatsApp';
+    btn.disabled = false;
   }
 }
 
