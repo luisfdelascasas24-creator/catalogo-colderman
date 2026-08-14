@@ -421,16 +421,20 @@ function inferTelefono(text,lines){
   const NUMERO_OFICINA_COLDERMAN="49096216"; // por seguridad, nunca devolver este número aunque calce con el patrón
   for(let i=anchor;i<lines.length;i++){
     const l=lines[i].toUpperCase();
-    if(/\bFONO\b|\bTEL[EÉ]FONO\b|\bCELULAR\b|\bWHATSAPP\b/.test(l) && !/\bRUT\b/.test(l) && !/OFICINA/.test(l)){
-      // Primero probamos el formato con +56 (ej: +56 9 1234 5678)
-      let m=lines[i].match(/\+?56[\s.-]?9?[\s.-]?\d{4}[\s.-]?\d{4}/);
+    if(/OFICINA/.test(l)) continue; // ese es el teléfono de Colderman, no del cliente
+    if(/\bFONO\b|\bTEL[EÉ]FONO\b|\bCELULAR\b|\bWHATSAPP\b/.test(l)){
+      // OJO: a veces el RUT y el TELÉFONO quedan en la misma línea porque están a la misma
+      // altura en el documento (columnas izquierda/derecha), y el lector OCR las junta.
+      // Por eso no miramos toda la línea: cortamos todo lo que viene ANTES de la palabra
+      // "teléfono" y solo leemos los dígitos que vienen después de esa etiqueta.
+      const despuesDeEtiqueta = lines[i].replace(/^[\s\S]*?(FONO|TEL[EÉ]FONO|CELULAR|WHATSAPP)/i, "");
+      let m = despuesDeEtiqueta.match(/\+?56[\s.-]?9?[\s.-]?\d{4}[\s.-]?\d{4}/);
       let candidato = m ? m[0].replace(/[^\d+]/g,"") : "";
-      // Si no venía con +56, tomamos el formato local (ej: 953721740, sin código de país)
       if(!candidato){
-        const soloDigitos=lines[i].replace(/[^\d]/g,"");
-        if(soloDigitos.length>=8) candidato = soloDigitos.length>9 ? soloDigitos.slice(-9) : soloDigitos;
+        const soloDigitos = despuesDeEtiqueta.replace(/[^\d]/g,"");
+        if(soloDigitos.length>=8) candidato = soloDigitos.length>9 ? soloDigitos.slice(0,9) : soloDigitos;
       }
-      if(candidato && !candidato.replace(/[^\d]/g,"").includes(NUMERO_OFICINA_COLDERMAN)) return candidato;
+      if(candidato && !candidato.includes(NUMERO_OFICINA_COLDERMAN)) return candidato;
     }
   }
   return "";
