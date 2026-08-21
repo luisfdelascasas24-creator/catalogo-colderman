@@ -348,6 +348,7 @@ function openImageOverlay(src,filename){
 }
 function sanitizeName(v){
   return String(v||"")
+    .replace(/(\p{L})\s+8\s+(\p{L})/gu,"$1 & $2") // corrige el "&" que el OCR a veces lee como "8" suelto entre palabras
     .replace(/\bFECHA\s+EMISI[OÓ]N\b.*$/i,"")
     .replace(/\bFECHA\b.*$/i,"")
     .replace(/\bRUT\b.*$/i,"")
