@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Catálogo Colderman</title>
-<link rel="apple-touch-icon" href="https://luisfdelascasas24-creator.github.io/catalogo-colderman/LOGO%20SIN%20FONDO%20COLDERMAN.png">
-<link rel="icon" type="image/png" href="https://luisfdelascasas24-creator.github.io/catalogo-colderman/LOGO%20SIN%20FONDO%20COLDERMAN.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#185FA5">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Colderman">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -300,6 +303,14 @@ function goBack() {
 }
 
 loadProducts();
+
+// Registro del service worker: habilita que el navegador ofrezca
+// "Instalar app" / "Agregar a pantalla de inicio".
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
 </html>
