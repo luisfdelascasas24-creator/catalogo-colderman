@@ -7,53 +7,51 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#16324A">
+<meta name="theme-color" content="#FF6A1A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Colderman">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --ink: #1C232B;
-  --ink-soft: #5B6470;
-  --paper: #EDEEEA;
-  --steel: #16324A;
-  --steel-deep: #0E2436;
-  --orange: #E1670E;
-  --orange-deep: #B85207;
-  --line: #DAD9D2;
-  --ok: #3E7A4D;
-  --bad: #B94A3D;
+  --ink: #16181D;
+  --ink-soft: #767C87;
+  --bg: #FAFAFA;
+  --accent: #FF6A1A;
+  --accent-deep: #E85700;
+  --line: #ECECEC;
+  --ok: #1B8A5A;
+  --bad: #D8483A;
   --card: #FFFFFF;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--paper);
+  background: var(--bg);
   color: var(--ink);
   min-height: 100vh;
 }
-.app { max-width: 480px; margin: 0 auto; background: var(--paper); min-height: 100vh; }
+.app { max-width: 480px; margin: 0 auto; background: var(--bg); min-height: 100vh; }
 
 .topbar {
-  background: var(--steel);
-  padding: 16px 16px 14px;
+  background: var(--card);
+  padding: 18px 18px 12px;
   display: flex;
   align-items: baseline;
   gap: 10px;
-  border-bottom: 3px solid var(--orange);
+  border-bottom: 1px solid var(--line);
 }
 .topbar-title {
-  color: #EAF1F6;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 21px;
-  letter-spacing: 0.01em;
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.01em;
 }
 .back-btn {
-  color: #9FC1D6;
+  color: var(--accent);
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -63,146 +61,143 @@ body {
   padding: 0;
 }
 
-.search-wrap { padding: 12px 14px 10px; background: var(--paper); }
+.search-wrap { padding: 14px 16px 10px; background: var(--bg); }
 .search-wrap input {
   width: 100%;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
-  padding: 10px 14px;
-  border-radius: 6px;
+  padding: 12px 16px;
+  border-radius: 12px;
   border: 1.5px solid var(--line);
   background: var(--card);
   color: var(--ink);
   outline: none;
 }
-.search-wrap input:focus { border-color: var(--steel); }
+.search-wrap input:focus { border-color: var(--accent); }
 
 .cats-wrap {
   display: flex;
-  gap: 6px;
-  padding: 2px 14px 12px;
+  gap: 7px;
+  padding: 2px 16px 14px;
   overflow-x: auto;
   scrollbar-width: none;
 }
 .cats-wrap::-webkit-scrollbar { display: none; }
 .cat {
   font-family: 'Inter', sans-serif;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 6px 13px;
-  border-radius: 5px;
+  padding: 7px 15px;
+  border-radius: 100px;
   white-space: nowrap;
   cursor: pointer;
   border: 1.5px solid var(--line);
   background: var(--card);
   color: var(--ink-soft);
 }
-.cat.active { background: var(--orange); color: #fff; border-color: var(--orange-deep); }
+.cat.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 .count-badge {
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--ink-soft);
-  padding: 2px 14px 8px;
+  padding: 2px 16px 10px;
 }
 
-.product-list { padding: 0 10px 16px; display: flex; flex-direction: column; gap: 6px; }
+.product-list { padding: 0 12px 20px; display: flex; flex-direction: column; gap: 10px; }
 .product-card {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 9px 10px;
+  border-radius: 16px;
+  padding: 12px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   cursor: pointer;
+  box-shadow: 0 1px 2px rgba(22,24,29,0.04);
 }
-.product-card:active { background: #F5F4F0; }
-.product-thumb { width: 54px; height: 54px; border-radius: 4px; background: var(--paper); object-fit: cover; flex-shrink: 0; border: 1px solid var(--line); }
+.product-card:active { background: #F6F6F6; }
+.product-thumb { width: 60px; height: 60px; border-radius: 12px; background: var(--bg); object-fit: cover; flex-shrink: 0; }
 .product-thumb-placeholder {
-  width: 54px; height: 54px; border-radius: 4px; background: var(--paper);
+  width: 60px; height: 60px; border-radius: 12px; background: var(--bg);
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  color: #B7BBC0; font-size: 20px; border: 1px solid var(--line);
+  color: #C7CBD1; font-size: 22px;
 }
 .product-info { flex: 1; min-width: 0; }
-.product-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  line-height: 1.15;
-}
 .product-code {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--ink-soft);
-  margin-top: 4px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.01em;
 }
-.product-stock { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: var(--ok); margin-top: 3px; }
-.arrow { color: #B7BBC0; font-size: 18px; }
+.product-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.product-stock { font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 600; color: var(--ok); margin-top: 4px; }
+.arrow { color: #C7CBD1; font-size: 18px; }
 
 .detail-view { display: none; }
 .detail-view.active { display: block; }
 .list-view.hidden { display: none; }
 
-.photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 12px; background: var(--steel-deep); }
-.photo-item { position: relative; border-radius: 5px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s; }
-.photo-item.selected { border-color: var(--orange); }
+.photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 14px; background: #F1F1EF; }
+.photo-item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s; background: #fff; }
+.photo-item.selected { border-color: var(--accent); }
 .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .photo-check {
-  position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 4px;
-  background: var(--orange); display: none; align-items: center; justify-content: center;
+  position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 100px;
+  background: var(--accent); display: none; align-items: center; justify-content: center;
   color: white; font-size: 12px;
 }
 .photo-item.selected .photo-check { display: flex; }
 
-.detail-body { padding: 16px; }
+.detail-body { padding: 18px; }
 .detail-code-tag {
-  display: inline-block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  font-weight: 500;
-  color: #fff;
-  background: var(--ink);
-  padding: 3px 9px;
-  border-radius: 4px;
-  margin-bottom: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
 }
 .detail-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 23px;
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1.15;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.3;
 }
 .specs-title {
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--ink-soft);
-  margin: 18px 0 6px;
-  padding-top: 12px;
+  margin: 20px 0 4px;
+  padding-top: 14px;
   border-top: 1px solid var(--line);
 }
-.spec-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.spec-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
 .spec-label { font-family: 'Inter', sans-serif; color: var(--ink-soft); }
 .spec-val { font-family: 'Inter', sans-serif; color: var(--ink); font-weight: 600; }
 
-.actions { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.actions { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
 .btn-copy {
-  width: 100%; padding: 11px; border-radius: 6px; border: 1.5px solid var(--steel);
-  background: var(--card); color: var(--steel); font-family: 'Inter', sans-serif;
+  width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--line);
+  background: var(--card); color: var(--ink); font-family: 'Inter', sans-serif;
   font-size: 14px; font-weight: 600; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.btn-copy:active { background: #EDF2F5; }
+.btn-copy:active { background: #F6F6F6; }
 .btn-wsp {
-  width: 100%; padding: 14px; border-radius: 6px; border: none; background: #25D366;
+  width: 100%; padding: 15px; border-radius: 12px; border: none; background: #25D366;
   color: white; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 10px;
 }
-.btn-wsp:disabled { background: #C7CCC9; }
+.btn-wsp:disabled { background: #D8DAD6; }
 .btn-wsp:active { background: #1da851; }
 .select-hint { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft); text-align: center; }
 .copied-msg { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ok); text-align: center; font-weight: 600; display: none; }
@@ -302,8 +297,8 @@ function renderList(products) {
     return `<div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
       ${thumb}
       <div class="product-info">
-        <p class="product-name">${p['Producto'] || ''} ${p['Item'] || ''}</p>
-        <p class="product-code">${p['Codigo'] || ''} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
+        <p class="product-code">${p['Codigo'] || ''}</p>
+        <p class="product-name">${p['Producto'] || ''} ${p['Item'] || ''} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
         ${stock}
       </div>
       <span class="arrow">›</span>
