@@ -143,7 +143,40 @@ body {
 
 .detail-view { display: none; }
 .detail-view.active { display: block; }
-.list-view.hidden { display: none; }
+.hidden { display: none; }
+
+.cat-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 6px 16px 20px;
+}
+.cat-tile {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(22,24,29,0.04);
+}
+.cat-tile:active { background: #F6F6F6; }
+.cat-tile-icon { font-size: 26px; margin-bottom: 4px; }
+.cat-tile-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 15.5px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.cat-tile-count {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
 
 .photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 14px; background: #F1F1EF; }
 .photo-item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s; background: #fff; }
@@ -208,20 +241,25 @@ body {
 <body>
 
 <div class="app">
-  <div class="list-view" id="listView">
+  <div class="home-view" id="homeView">
     <div class="topbar">
       <span class="topbar-title">Catálogo Colderman</span>
     </div>
     <div class="search-wrap">
-      <input type="text" id="searchInput" placeholder="Buscar por código, producto o marca..." oninput="filterProducts()" />
+      <input type="text" id="homeSearchInput" placeholder="Buscar por código, producto o marca..." oninput="searchFromHome()" />
     </div>
-    <div class="cats-wrap" id="catsWrap">
-      <button class="cat active" onclick="filterCat(this, '')">Todos</button>
+    <div id="catTiles" class="cat-tiles">
+      <div class="loading">Cargando categorías...</div>
+    </div>
+  </div>
+
+  <div class="list-view hidden" id="listView">
+    <div class="topbar">
+      <button class="back-btn" onclick="goHome()">‹ Volver</button>
+      <span class="topbar-title" id="listTitle">Resultados</span>
     </div>
     <div id="productCount" class="count-badge"></div>
-    <div id="productList" class="product-list">
-      <div class="loading">Cargando productos...</div>
-    </div>
+    <div id="productList" class="product-list"></div>
   </div>
 
   <div class="detail-view" id="detailView">
@@ -253,10 +291,22 @@ body {
 const SHEET_ID = '1pXIUcd2WNbr29ZWkxOdISj--yTB64vPAxQyfVjOLoQ0';
 const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
 
+// Orden de prioridad: lo que más se vende primero. Cualquier categoría que
+// no esté en esta lista aparece después, ordenada alfabéticamente.
+const ORDEN_PRIORIDAD = ['Compresores', 'Evaporadores', 'Condensadores', 'Herramientas', 'Filtros', 'Blowers'];
+const ICONOS_CATEGORIA = {
+  'Compresores': '⚙️', 'Evaporadores': '❄️', 'Condensadores': '🌬️',
+  'Herramientas': '🛠️', 'Filtros': '🧰', 'Blowers': '🌀',
+  'Válvulas': '🔩', 'Mangueras / Fittings': '🔗', 'Gases / Aceites': '🧴',
+  'Switch / Sensores': '📟', 'Electroventiladores': '🌪️',
+  'Equipos Eléctricos': '🔌', 'Otros': '📦'
+};
+
 let allProducts = [];
 let currentProduct = null;
 let selectedPhotos = [];
 let activeCat = '';
+let cameFromSearch = false;
 
 async function loadProducts() {
   try {
@@ -272,11 +322,58 @@ async function loadProducts() {
       });
       return obj;
     }).filter(p => p['Codigo'] && (p['Producto'] || p['Item']));
-    renderCats(allProducts);
-    renderList(allProducts);
+    renderTiles();
   } catch(e) {
-    document.getElementById('productList').innerHTML = '<div class="empty">Error cargando productos.</div>';
+    document.getElementById('catTiles').innerHTML = '<div class="empty">Error cargando productos.</div>';
   }
+}
+
+function renderTiles() {
+  const conteo = {};
+  allProducts.forEach(p => {
+    const cat = p['Categoria'] || 'Otros';
+    conteo[cat] = (conteo[cat] || 0) + 1;
+  });
+  const categoriasConProductos = Object.keys(conteo);
+  const prioritarias = ORDEN_PRIORIDAD.filter(c => categoriasConProductos.includes(c));
+  const resto = categoriasConProductos.filter(c => !ORDEN_PRIORIDAD.includes(c)).sort();
+  const ordenFinal = [...prioritarias, ...resto];
+
+  const wrap = document.getElementById('catTiles');
+  wrap.innerHTML = ordenFinal.map(cat => `
+    <div class="cat-tile" onclick="openCategory('${cat.replace(/'/g, "\\'")}')">
+      <span class="cat-tile-icon">${ICONOS_CATEGORIA[cat] || '📦'}</span>
+      <span class="cat-tile-name">${cat}</span>
+      <span class="cat-tile-count">${conteo[cat]} productos</span>
+    </div>
+  `).join('');
+}
+
+function openCategory(cat) {
+  activeCat = cat;
+  cameFromSearch = false;
+  document.getElementById('homeView').classList.add('hidden');
+  document.getElementById('listView').classList.remove('hidden');
+  document.getElementById('listTitle').textContent = cat;
+  renderList(allProducts.filter(p => (p['Categoria'] || 'Otros') === cat));
+}
+
+function searchFromHome() {
+  const q = document.getElementById('homeSearchInput').value.trim();
+  if (!q) return;
+  cameFromSearch = true;
+  activeCat = '';
+  document.getElementById('homeView').classList.add('hidden');
+  document.getElementById('listView').classList.remove('hidden');
+  document.getElementById('listTitle').textContent = 'Resultados de búsqueda';
+  const qLower = q.toLowerCase();
+  renderList(allProducts.filter(p => Object.values(p).some(v => String(v).toLowerCase().includes(qLower))));
+}
+
+function goHome() {
+  document.getElementById('listView').classList.add('hidden');
+  document.getElementById('homeView').classList.remove('hidden');
+  document.getElementById('homeSearchInput').value = '';
 }
 
 function renderList(products) {
@@ -304,29 +401,6 @@ function renderList(products) {
       <span class="arrow">›</span>
     </div>`;
   }).join('');
-}
-
-function renderCats(products) {
-  const cats = [...new Set(products.map(p => p['Categoria'] || p['Producto']).filter(Boolean))].sort();
-  const wrap = document.getElementById('catsWrap');
-  wrap.innerHTML = `<button class="cat ${activeCat === '' ? 'active' : ''}" onclick="filterCat(this, '')">Todos</button>` +
-    cats.map(c => `<button class="cat ${activeCat === c ? 'active' : ''}" onclick="filterCat(this, '${c}')">${c}</button>`).join('');
-}
-
-function filterCat(btn, cat) {
-  activeCat = cat;
-  document.querySelectorAll('.cat').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  filterProducts();
-}
-
-function filterProducts() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  let filtered = allProducts.filter(p =>
-    Object.values(p).some(v => String(v).toLowerCase().includes(q))
-  );
-  if (activeCat) filtered = filtered.filter(p => (p['Categoria'] || p['Producto']) === activeCat);
-  renderList(filtered);
 }
 
 function showDetail(idx) {
