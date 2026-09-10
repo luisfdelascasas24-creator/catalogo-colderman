@@ -276,7 +276,7 @@ async function loadProducts() {
         obj[col] = row.c[i] ? (String(row.c[i].v) || '') : '';
       });
       return obj;
-    }).filter(p => p['Codigo'] || p['Producto']);
+    }).filter(p => p['Codigo'] && (p['Producto'] || p['Item']));
     renderCats(allProducts);
     renderList(allProducts);
   } catch(e) {
