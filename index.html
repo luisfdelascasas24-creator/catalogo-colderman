@@ -7,61 +7,207 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#185FA5">
+<meta name="theme-color" content="#16324A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Colderman">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
+:root {
+  --ink: #1C232B;
+  --ink-soft: #5B6470;
+  --paper: #EDEEEA;
+  --steel: #16324A;
+  --steel-deep: #0E2436;
+  --orange: #E1670E;
+  --orange-deep: #B85207;
+  --line: #DAD9D2;
+  --ok: #3E7A4D;
+  --bad: #B94A3D;
+  --card: #FFFFFF;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; min-height: 100vh; }
-.app { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; }
-.topbar { background: #185FA5; padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
-.topbar-title { color: #E6F1FB; font-size: 16px; font-weight: 600; }
-.back-btn { color: #B5D4F4; font-size: 14px; cursor: pointer; background: none; border: none; padding: 0; }
-.search-wrap { padding: 10px 12px; background: #f0f2f5; border-bottom: 1px solid #e0e0e0; }
-.search-wrap input { width: 100%; font-size: 14px; padding: 9px 14px; border-radius: 8px; border: 1px solid #d0d0d0; background: white; color: #333; outline: none; }
-.search-wrap input:focus { border-color: #185FA5; }
-.cats-wrap { display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; border-bottom: 1px solid #e0e0e0; scrollbar-width: none; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+.app { max-width: 480px; margin: 0 auto; background: var(--paper); min-height: 100vh; }
+
+.topbar {
+  background: var(--steel);
+  padding: 16px 16px 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  border-bottom: 3px solid var(--orange);
+}
+.topbar-title {
+  color: #EAF1F6;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: 0.01em;
+}
+.back-btn {
+  color: #9FC1D6;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.search-wrap { padding: 12px 14px 10px; background: var(--paper); }
+.search-wrap input {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  outline: none;
+}
+.search-wrap input:focus { border-color: var(--steel); }
+
+.cats-wrap {
+  display: flex;
+  gap: 6px;
+  padding: 2px 14px 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
 .cats-wrap::-webkit-scrollbar { display: none; }
-.cat { font-size: 12px; padding: 5px 12px; border-radius: 20px; white-space: nowrap; font-weight: 500; cursor: pointer; border: 1px solid #d0d0d0; background: white; color: #555; }
-.cat.active { background: #185FA5; color: white; border-color: #185FA5; }
-.product-list { padding: 8px 12px; display: flex; flex-direction: column; gap: 8px; }
-.count-badge { font-size: 12px; color: #888; padding: 6px 12px; }
-.product-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; cursor: pointer; }
-.product-card:active { background: #f5f5f5; }
-.product-thumb { width: 56px; height: 56px; border-radius: 8px; background: #f0f2f5; object-fit: cover; flex-shrink: 0; }
-.product-thumb-placeholder { width: 56px; height: 56px; border-radius: 8px; background: #f0f2f5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #bbb; font-size: 22px; }
+.cat {
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 13px;
+  border-radius: 5px;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  color: var(--ink-soft);
+}
+.cat.active { background: var(--orange); color: #fff; border-color: var(--orange-deep); }
+
+.count-badge {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--ink-soft);
+  padding: 2px 14px 8px;
+}
+
+.product-list { padding: 0 10px 16px; display: flex; flex-direction: column; gap: 6px; }
+.product-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 9px 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+.product-card:active { background: #F5F4F0; }
+.product-thumb { width: 54px; height: 54px; border-radius: 4px; background: var(--paper); object-fit: cover; flex-shrink: 0; border: 1px solid var(--line); }
+.product-thumb-placeholder {
+  width: 54px; height: 54px; border-radius: 4px; background: var(--paper);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  color: #B7BBC0; font-size: 20px; border: 1px solid var(--line);
+}
 .product-info { flex: 1; min-width: 0; }
-.product-name { font-size: 14px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.product-code { font-size: 12px; color: #888; margin-top: 3px; }
-.product-stock { font-size: 11px; color: #25a244; margin-top: 2px; }
-.arrow { color: #bbb; font-size: 18px; }
+.product-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.15;
+}
+.product-code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+.product-stock { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: var(--ok); margin-top: 3px; }
+.arrow { color: #B7BBC0; font-size: 18px; }
+
 .detail-view { display: none; }
 .detail-view.active { display: block; }
 .list-view.hidden { display: none; }
-.photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px; background: #f0f2f5; }
-.photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s; }
-.photo-item.selected { border-color: #185FA5; }
+
+.photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 12px; background: var(--steel-deep); }
+.photo-item { position: relative; border-radius: 5px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s; }
+.photo-item.selected { border-color: var(--orange); }
 .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photo-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background: #185FA5; display: none; align-items: center; justify-content: center; color: white; font-size: 12px; }
+.photo-check {
+  position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 4px;
+  background: var(--orange); display: none; align-items: center; justify-content: center;
+  color: white; font-size: 12px;
+}
 .photo-item.selected .photo-check { display: flex; }
-.detail-body { padding: 14px; }
-.detail-name { font-size: 17px; font-weight: 600; color: #222; }
-.detail-code { font-size: 13px; color: #888; margin-top: 3px; margin-bottom: 16px; }
-.specs-title { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-.spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-.spec-label { color: #888; }
-.spec-val { color: #222; font-weight: 500; }
-.actions { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.btn-copy { width: 100%; padding: 11px; border-radius: 10px; border: 1.5px solid #185FA5; background: #E6F1FB; color: #0C447C; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-copy:active { background: #B5D4F4; }
-.btn-wsp { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #25D366; color: white; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-.btn-wsp:disabled { background: #b0b0b0; }
+
+.detail-body { padding: 16px; }
+.detail-code-tag {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: var(--ink);
+  padding: 3px 9px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.detail-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 23px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.specs-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin: 18px 0 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.spec-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.spec-label { font-family: 'Inter', sans-serif; color: var(--ink-soft); }
+.spec-val { font-family: 'Inter', sans-serif; color: var(--ink); font-weight: 600; }
+
+.actions { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.btn-copy {
+  width: 100%; padding: 11px; border-radius: 6px; border: 1.5px solid var(--steel);
+  background: var(--card); color: var(--steel); font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-copy:active { background: #EDF2F5; }
+.btn-wsp {
+  width: 100%; padding: 14px; border-radius: 6px; border: none; background: #25D366;
+  color: white; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-wsp:disabled { background: #C7CCC9; }
 .btn-wsp:active { background: #1da851; }
-.select-hint { font-size: 12px; color: #888; text-align: center; }
-.copied-msg { font-size: 13px; color: #25D366; text-align: center; font-weight: 500; display: none; }
-.empty { padding: 3rem; text-align: center; color: #888; font-size: 14px; }
-.loading { padding: 3rem; text-align: center; color: #888; font-size: 14px; }
+.select-hint { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft); text-align: center; }
+.copied-msg { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ok); text-align: center; font-weight: 600; display: none; }
+.empty { padding: 3rem; text-align: center; color: var(--ink-soft); font-family: 'Inter', sans-serif; font-size: 14px; }
+.loading { padding: 3rem; text-align: center; color: var(--ink-soft); font-family: 'Inter', sans-serif; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -69,7 +215,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 <div class="app">
   <div class="list-view" id="listView">
     <div class="topbar">
-      <span class="topbar-title">📦 Catálogo Colderman</span>
+      <span class="topbar-title">Catálogo Colderman</span>
     </div>
     <div class="search-wrap">
       <input type="text" id="searchInput" placeholder="Buscar por código, producto o marca..." oninput="filterProducts()" />
@@ -90,8 +236,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     </div>
     <div class="photos-grid" id="photosGrid"></div>
     <div class="detail-body">
+      <p class="detail-code-tag" id="dCodigo"></p>
       <p class="detail-name" id="dNombre"></p>
-      <p class="detail-code" id="dCodigo"></p>
       <p class="specs-title">Especificaciones</p>
       <div id="specsContainer"></div>
     </div>
@@ -123,7 +269,7 @@ async function loadProducts() {
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const rows = json.table.rows;
-    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Precio','Stock'];
+    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Costo','Stock','Categoria'];
     allProducts = rows.map(row => {
       const obj = {};
       colNames.forEach((col, i) => {
@@ -157,7 +303,7 @@ function renderList(products) {
       ${thumb}
       <div class="product-info">
         <p class="product-name">${p['Producto'] || ''} ${p['Item'] || ''}</p>
-        <p class="product-code">Cód: ${p['Codigo'] || ''} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
+        <p class="product-code">${p['Codigo'] || ''} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
         ${stock}
       </div>
       <span class="arrow">›</span>
@@ -166,7 +312,7 @@ function renderList(products) {
 }
 
 function renderCats(products) {
-  const cats = [...new Set(products.map(p => p['Producto']).filter(Boolean))].sort();
+  const cats = [...new Set(products.map(p => p['Categoria'] || p['Producto']).filter(Boolean))].sort();
   const wrap = document.getElementById('catsWrap');
   wrap.innerHTML = `<button class="cat ${activeCat === '' ? 'active' : ''}" onclick="filterCat(this, '')">Todos</button>` +
     cats.map(c => `<button class="cat ${activeCat === c ? 'active' : ''}" onclick="filterCat(this, '${c}')">${c}</button>`).join('');
@@ -184,7 +330,7 @@ function filterProducts() {
   let filtered = allProducts.filter(p =>
     Object.values(p).some(v => String(v).toLowerCase().includes(q))
   );
-  if (activeCat) filtered = filtered.filter(p => p['Producto'] === activeCat);
+  if (activeCat) filtered = filtered.filter(p => (p['Categoria'] || p['Producto']) === activeCat);
   renderList(filtered);
 }
 
@@ -195,7 +341,7 @@ function showDetail(idx) {
   document.getElementById('detailView').classList.add('active');
   document.getElementById('detailTitle').textContent = currentProduct['Codigo'] || '';
   document.getElementById('dNombre').textContent = `${currentProduct['Producto'] || ''} ${currentProduct['Item'] || ''}`;
-  document.getElementById('dCodigo').textContent = `Código: ${currentProduct['Codigo'] || ''}`;
+  document.getElementById('dCodigo').textContent = currentProduct['Codigo'] || '';
 
   const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante'];
   let specsHtml = specs
@@ -203,12 +349,12 @@ function showDetail(idx) {
     .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
     .join('');
 
-  if (currentProduct['Precio'] && currentProduct['Precio'] !== '0' && currentProduct['Precio'] !== 'null') {
-    specsHtml += `<div class="spec-row"><span class="spec-label">Precio</span><span class="spec-val" style="color:#185FA5;">$${Number(currentProduct['Precio']).toLocaleString('es-CL')}</span></div>`;
+  if (currentProduct['Costo'] && currentProduct['Costo'] !== '0' && currentProduct['Costo'] !== 'null') {
+    specsHtml += `<div class="spec-row"><span class="spec-label">Costo</span><span class="spec-val" style="color:#16324A;">$${Number(currentProduct['Costo']).toLocaleString('es-CL')}</span></div>`;
   }
   if (currentProduct['Stock'] !== undefined && currentProduct['Stock'] !== '' && currentProduct['Stock'] !== 'null') {
     const stock = Number(currentProduct['Stock']);
-    const stockColor = stock > 0 ? '#25a244' : '#e24b4a';
+    const stockColor = stock > 0 ? '#3E7A4D' : '#B94A3D';
     const stockText = stock > 0 ? `${stock} disponibles` : 'Sin stock';
     specsHtml += `<div class="spec-row"><span class="spec-label">Stock</span><span class="spec-val" style="color:${stockColor};">${stockText}</span></div>`;
   }
@@ -217,7 +363,7 @@ function showDetail(idx) {
   const fotos = ['Foto1','Foto2','Foto3','Foto4'].filter(k => currentProduct[k] && currentProduct[k] !== 'null');
   const grid = document.getElementById('photosGrid');
   if (fotos.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#888;font-size:13px;">Sin fotos cargadas</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#B7BBC0;font-size:13px;">Sin fotos cargadas</div>';
   } else {
     grid.innerHTML = fotos.map((k, i) => `
       <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${currentProduct[k]}')">
