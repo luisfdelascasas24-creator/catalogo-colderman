@@ -42,6 +42,9 @@ body {
   align-items: baseline;
   gap: 10px;
   border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 .topbar-title {
   color: var(--ink);
@@ -143,7 +146,7 @@ body {
 
 .detail-view { display: none; }
 .detail-view.active { display: block; }
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 .cat-tiles {
   display: grid;
