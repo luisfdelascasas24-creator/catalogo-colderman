@@ -248,9 +248,9 @@ body {
     <div class="search-wrap">
       <input type="text" id="homeSearchInput" placeholder="Buscar por código, producto o marca..." oninput="searchFromHome()" />
     </div>
-    <div id="catTiles" class="cat-tiles">
-      <div class="loading">Cargando categorías...</div>
-    </div>
+    <div id="catTiles" class="cat-tiles"></div>
+    <div id="homeCount" class="count-badge hidden"></div>
+    <div id="homeResults" class="product-list hidden"></div>
   </div>
 
   <div class="list-view hidden" id="listView">
@@ -296,7 +296,7 @@ const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:
 const ORDEN_PRIORIDAD = ['Compresores', 'Evaporadores', 'Condensadores', 'Herramientas', 'Filtros', 'Blowers'];
 const ICONOS_CATEGORIA = {
   'Compresores': '⚙️', 'Evaporadores': '❄️', 'Condensadores': '🌬️',
-  'Herramientas': '🛠️', 'Filtros': '🧰', 'Blowers': '🌀',
+  'Herramientas': '🛠️', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
   'Válvulas': '🔩', 'Mangueras / Fittings': '🔗', 'Gases / Aceites': '🧴',
   'Switch / Sensores': '📟', 'Electroventiladores': '🌪️',
   'Equipos Eléctricos': '🔌', 'Otros': '📦'
@@ -360,14 +360,25 @@ function openCategory(cat) {
 
 function searchFromHome() {
   const q = document.getElementById('homeSearchInput').value.trim();
-  if (!q) return;
-  cameFromSearch = true;
-  activeCat = '';
-  document.getElementById('homeView').classList.add('hidden');
-  document.getElementById('listView').classList.remove('hidden');
-  document.getElementById('listTitle').textContent = 'Resultados de búsqueda';
+  const tiles = document.getElementById('catTiles');
+  const results = document.getElementById('homeResults');
+  const count = document.getElementById('homeCount');
+
+  if (!q) {
+    tiles.classList.remove('hidden');
+    results.classList.add('hidden');
+    count.classList.add('hidden');
+    return;
+  }
+
   const qLower = q.toLowerCase();
-  renderList(allProducts.filter(p => Object.values(p).some(v => String(v).toLowerCase().includes(qLower))));
+  const filtrados = allProducts.filter(p => Object.values(p).some(v => String(v).toLowerCase().includes(qLower)));
+
+  tiles.classList.add('hidden');
+  results.classList.remove('hidden');
+  count.classList.remove('hidden');
+  count.textContent = `${filtrados.length} productos`;
+  renderList(filtrados, 'homeResults');
 }
 
 function goHome() {
@@ -376,10 +387,12 @@ function goHome() {
   document.getElementById('homeSearchInput').value = '';
 }
 
-function renderList(products) {
-  const list = document.getElementById('productList');
-  const count = document.getElementById('productCount');
-  count.textContent = `${products.length} productos`;
+function renderList(products, targetId) {
+  targetId = targetId || 'productList';
+  const list = document.getElementById(targetId);
+  if (targetId === 'productList') {
+    document.getElementById('productCount').textContent = `${products.length} productos`;
+  }
   if (products.length === 0) {
     list.innerHTML = '<div class="empty">No se encontraron productos</div>';
     return;
