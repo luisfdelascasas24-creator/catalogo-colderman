@@ -348,7 +348,7 @@ async function loadProducts() {
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const rows = json.table.rows;
-    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Costo','Stock','Categoria','NombreWeb'];
+    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Costo','Stock','Categoria','NombreWeb','Ancho','Alto','Grosor'];
     allProducts = rows.map(row => {
       const obj = {};
       colNames.forEach((col, i) => {
@@ -478,7 +478,7 @@ function showDetail(idx) {
   document.getElementById('dNombre').textContent = nombreMostrar(currentProduct);
   document.getElementById('dCodigo').textContent = currentProduct['Codigo'] || '';
 
-  const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante'];
+  const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Ancho','Alto','Grosor'];
   let specsHtml = specs
     .filter(k => currentProduct[k] && currentProduct[k] !== 'null')
     .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
@@ -560,10 +560,18 @@ async function shareEverything() {
     const files = await Promise.all(filePromises);
 
     if (navigator.share && navigator.canShare({ files })) {
-      await navigator.share({ files, text, title: nombreMostrar(p) });
+      const shareData = { files };
+      if (files.length === 1) {
+        shareData.text = text;
+        shareData.title = nombreMostrar(p);
+      }
+      await navigator.share(shareData);
       const msg = document.getElementById('copiedMsg');
+      msg.textContent = files.length > 1
+        ? '✓ Fotos enviadas — pega la descripción (ya copiada) una sola vez en el chat'
+        : '✓ Datos copiados al portapapeles';
       msg.style.display = 'block';
-      setTimeout(() => msg.style.display = 'none', 3000);
+      setTimeout(() => { msg.style.display = 'none'; msg.textContent = '✓ Datos copiados al portapapeles'; }, 4000);
     } else {
       throw new Error("No compatible");
     }
