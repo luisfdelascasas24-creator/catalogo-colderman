@@ -348,7 +348,7 @@ async function loadProducts() {
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const rows = json.table.rows;
-    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Costo','Stock','Categoria','NombreWeb','Ancho','Alto','Grosor'];
+    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Costo','Stock','Categoria','NombreWeb','Ancho','Alto','Grosor','SpecsExtra'];
     allProducts = rows.map(row => {
       const obj = {};
       colNames.forEach((col, i) => {
@@ -484,6 +484,18 @@ function showDetail(idx) {
     .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
     .join('');
 
+  // Cualquier otra característica que traiga la ficha técnica de la web
+  // (varía según el tipo de producto: medidas, compatibilidad, etc.)
+  try {
+    const extra = JSON.parse(currentProduct['SpecsExtra'] || '{}');
+    Object.keys(extra).forEach(label => {
+      const valor = extra[label];
+      if (!valor) return;
+      const labelBonito = label.toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
+      specsHtml += `<div class="spec-row"><span class="spec-label">${labelBonito}</span><span class="spec-val">${valor}</span></div>`;
+    });
+  } catch(e) {}
+
   if (currentProduct['Costo'] && currentProduct['Costo'] !== '0' && currentProduct['Costo'] !== 'null') {
     specsHtml += `<div class="spec-row"><span class="spec-label">Costo</span><span class="spec-val" style="color:#16324A;">$${Number(currentProduct['Costo']).toLocaleString('es-CL')}</span></div>`;
   }
@@ -560,18 +572,10 @@ async function shareEverything() {
     const files = await Promise.all(filePromises);
 
     if (navigator.share && navigator.canShare({ files })) {
-      const shareData = { files };
-      if (files.length === 1) {
-        shareData.text = text;
-        shareData.title = nombreMostrar(p);
-      }
-      await navigator.share(shareData);
+      await navigator.share({ files, text, title: nombreMostrar(p) });
       const msg = document.getElementById('copiedMsg');
-      msg.textContent = files.length > 1
-        ? '✓ Fotos enviadas — pega la descripción (ya copiada) una sola vez en el chat'
-        : '✓ Datos copiados al portapapeles';
       msg.style.display = 'block';
-      setTimeout(() => { msg.style.display = 'none'; msg.textContent = '✓ Datos copiados al portapapeles'; }, 4000);
+      setTimeout(() => msg.style.display = 'none', 3000);
     } else {
       throw new Error("No compatible");
     }
