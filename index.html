@@ -340,6 +340,23 @@ function nombreMostrar(p) {
   const base = `${p['Producto'] || ''} ${p['Item'] || ''}`.trim();
   return base || p['NombreWeb'] || '(Sin nombre)';
 }
+
+function construirTextoProducto(p) {
+  const lineas = [`*${nombreMostrar(p)}*`, `Código: ${p['Codigo'] || ''}`];
+  const camposFijos = ['Marca', 'Modelo', 'Ranuras Polea', 'Voltaje', 'Refrigerante', 'Ancho', 'Alto', 'Grosor'];
+  camposFijos.forEach(campo => {
+    if (p[campo] && p[campo] !== 'null') lineas.push(`${campo}: ${p[campo]}`);
+  });
+  try {
+    const extra = JSON.parse(p['SpecsExtra'] || '{}');
+    Object.keys(extra).forEach(label => {
+      if (!extra[label]) return;
+      const labelBonito = label.toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
+      lineas.push(`${labelBonito}: ${extra[label]}`);
+    });
+  } catch(e) {}
+  return lineas.join('\n');
+}
 let cameFromSearch = false;
 
 async function loadProducts() {
@@ -543,7 +560,7 @@ function updateWspBtn() {
 
 function copyText() {
   const p = currentProduct;
-  const text = `*${nombreMostrar(p)}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nRanuras Polea: ${p['Ranuras Polea'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
+  const text = construirTextoProducto(p);
   navigator.clipboard.writeText(text).then(() => {
     const msg = document.getElementById('copiedMsg');
     msg.style.display = 'block';
@@ -554,7 +571,7 @@ function copyText() {
 async function shareEverything() {
   const p = currentProduct;
   const btn = document.getElementById('wspBtn');
-  const text = `*${nombreMostrar(p)}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
+  const text = construirTextoProducto(p);
 
   try {
     btn.textContent = '⏳ Procesando...';
