@@ -819,6 +819,31 @@ async function compartirWhatsapp(d,btn){
 
 function triggerQuickShare(d,btn){ return compartirWhatsapp(d,btn); }
 
+// Botón "🔄 Actualizar app": por si el celular se quedó mostrando una versión vieja guardada en caché
+// (problema conocido del APK, documentado por Median: https://docs.median.co/docs/clear-webview-cache)
+function forzarActualizacionApp(){
+  showToast("Actualizando... puede demorar unos segundos",4000);
+  try{
+    if(typeof median!=="undefined" && median.webview && typeof median.webview.clearCache==="function"){
+      median.webview.clearCache();
+    }
+  }catch(e){ console.log("median.webview.clearCache no disponible",e); }
+  try{
+    if('caches' in window){ caches.keys().then(keys=>keys.forEach(k=>caches.delete(k))); }
+  }catch(e){}
+  try{
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.getRegistrations().then(regs=>{
+        regs.forEach(reg=>{
+          const url=(reg.active && reg.active.scriptURL)||"";
+          if(!url.includes("OneSignal")) reg.unregister(); // dejamos el de OneSignal (notificaciones), sacamos cualquier otro
+        });
+      });
+    }
+  }catch(e){}
+  setTimeout(()=>{ location.href=location.pathname+"?_v="+Date.now(); },500);
+}
+
 // Firebase
 function initStorage(){
   if(window._firebaseReady && window._db){
@@ -1251,6 +1276,7 @@ function renderLista(){
       </div>
       <div class="header-actions">
         <button class="btn-secondary" id="btnLogout" title="${(window._auth&&window._auth.currentUser&&window._auth.currentUser.email)||''}">🚪 Salir</button>
+        <button class="btn-secondary" id="btnForzarActualizacion" title="Si ves algo viejo que no corresponde, toca aquí para forzar la última versión">🔄 Actualizar</button>
         <button class="btn-secondary" id="btnExport">Exportar</button>
         <button class="btn-main" id="btnNuevo">➕ Crear nuevo despacho</button>
       </div>
@@ -1346,6 +1372,7 @@ function bindLista(){
   if(btnInstall) btnInstall.onclick=triggerInstall;
   document.getElementById("btnNuevo").onclick=()=>irANuevo(emptyForm());
   document.getElementById("btnExport").onclick=exportCSV;
+  document.getElementById("btnForzarActualizacion").onclick=forzarActualizacionApp;
   const btnLogout=document.getElementById("btnLogout");
   if(btnLogout) btnLogout.onclick=()=>{ if(confirm("¿Cerrar sesión?")) window._auth.signOut().then(()=>location.reload()); };
   const btnActivarNotif=document.getElementById("btnActivarNotif");
