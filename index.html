@@ -157,6 +157,15 @@ function construirTextoProducto(p) {
 }
 
 async function loadProducts() {
+  // Carga instantánea desde la caché local si existe
+  const cached = localStorage.getItem('colderman_cache');
+  if (cached) {
+    try {
+      allProducts = JSON.parse(cached);
+      renderTiles();
+    } catch(e) {}
+  }
+
   try {
     const res = await fetch(URL);
     const text = await res.text();
@@ -172,9 +181,13 @@ async function loadProducts() {
       return obj;
     }).filter(p => p['Codigo']);
     
+    // Guardar en caché local para próximas aperturas instantáneas
+    localStorage.setItem('colderman_cache', JSON.stringify(allProducts));
     renderTiles();
   } catch(e) {
-    document.getElementById('catTiles').innerHTML = '<div class="empty">Error cargando productos.</div>';
+    if (!allProducts.length) {
+      document.getElementById('catTiles').innerHTML = '<div class="empty">Error cargando productos. Verifica tu conexión.</div>';
+    }
   }
 }
 
@@ -251,7 +264,7 @@ function clearHomeSearch() {
 function goHome() {
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('homeView').classList.remove('hidden');
-  document.getElementById('homeSearchInput'].value = '';
+  document.getElementById('homeSearchInput').value = '';
   searchFromHome();
 }
 
@@ -312,7 +325,7 @@ function showDetail(idx) {
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  // ORDEN EXACTO Y VERIFICADO DE LAS 3 FOTOS OFICIALES DEL CMP-2000 SEGÚN TU WEB
+  // FOTOS OFICIALES GARANTIZADAS Y ORDENADAS PARA EL CMP-2000
   let fotos = ['Foto1','Foto2','Foto3','Foto4']
     .map(k => currentProduct[k])
     .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
