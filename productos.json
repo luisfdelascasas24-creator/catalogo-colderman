@@ -1,5 +1,20 @@
 [
   {
+    "codigo": "ACT-100",
+    "nombre": "Aceite para Compresor PAG 100 / Tinte UV",
+    "categoria": "Aceites y Fluidos",
+    "marca": "Supercool",
+    "modelo": "ACT-100",
+    "voltaje": "N/A",
+    "costo": 10721,
+    "stock": 67,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2023/02/5colder.png",
+      "https://www.colderman.cl/wp-content/uploads/2026/09/7-300x300.jpg",
+      "https://www.colderman.cl/wp-content/uploads/2026/09/8-300x300.jpg"
+    ]
+  },
+  {
     "codigo": "BLO-0011",
     "nombre": "BLOWER SOPLADOR TOYOTA HILUX REVO",
     "categoria": "Sopladores",
@@ -10,7 +25,106 @@
     "stock": 1,
     "fotos": [
       "https://www.colderman.cl/wp-content/uploads/2024/04/2-26-e1782401693306-300x300.png",
-      "https://www.colderman.cl/wp-content/uploads/2024/04/3-21-300x300.png"
+      "https://www.colderman.cl/wp-content/uploads/2024/04/3-21-300x300.png",
+      "https://www.colderman.cl/wp-content/uploads/2024/04/1-26-300x300.png"
+    ]
+  },
+  {
+    "codigo": "BLO-0002",
+    "nombre": "Blower Excavadora Caterpillar 320",
+    "categoria": "Sopladores",
+    "marca": "Caterpillar",
+    "modelo": "320",
+    "voltaje": "24V",
+    "costo": 22951,
+    "stock": 1,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2023/02/Blower-Excavadora-Caterpillar-320-1-300x300.png"
+    ]
+  },
+  {
+    "codigo": "BLO-1520",
+    "nombre": "Blower Caterpillar 320 Alternativo",
+    "categoria": "Sopladores",
+    "marca": "Caterpillar",
+    "modelo": "320",
+    "voltaje": "24V",
+    "costo": 148967,
+    "stock": 0,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2025/03/Black-and-White-Simple-Coming-Soon-Fashion-Collection-Instagram-Post-1-300x300.png",
+      "https://www.colderman.cl/wp-content/uploads/2025/03/5-300x300.png",
+      "https://www.colderman.cl/wp-content/uploads/2025/03/6-300x300.png"
+    ]
+  },
+  {
+    "codigo": "BLO-9910",
+    "nombre": "Blower Mack Granite",
+    "categoria": "Sopladores",
+    "marca": "Mack",
+    "modelo": "Granite",
+    "voltaje": "24V",
+    "costo": 256403,
+    "stock": 0,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2023/03/Blower-Mack-Granite-300x300.png"
+    ]
+  },
+  {
+    "codigo": "BLO-0100",
+    "nombre": "Blower Mercedes Benz",
+    "categoria": "Sopladores",
+    "marca": "Mercedes",
+    "modelo": "Universal",
+    "voltaje": "12V",
+    "costo": 136762,
+    "stock": 0,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2023/11/2-4-300x300.png",
+      "https://www.colderman.cl/wp-content/uploads/2023/11/1-5-300x300.png"
+    ]
+  },
+  {
+    "codigo": "BOB-1001",
+    "nombre": "Bobina 7H15 Universal 12V",
+    "categoria": "Bobinas",
+    "marca": "Universal",
+    "modelo": "7H15",
+    "voltaje": "12V",
+    "costo": 500024,
+    "stock": 3,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2026/08/171-300x300.jpg",
+      "https://www.colderman.cl/wp-content/uploads/2026/08/170-300x300.jpg"
+    ]
+  },
+  {
+    "codigo": "BOB-1002",
+    "nombre": "Bobina 7H15 Universal 24V",
+    "categoria": "Bobinas",
+    "marca": "Universal",
+    "modelo": "7H15",
+    "voltaje": "24V",
+    "costo": 130841,
+    "stock": 3,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2026/08/174-300x300.jpg",
+      "https://www.colderman.cl/wp-content/uploads/2026/08/173-300x300.jpg",
+      "https://www.colderman.cl/wp-content/uploads/2026/08/175-300x300.jpg"
+    ]
+  },
+  {
+    "codigo": "BOM-0010V",
+    "nombre": "Bomba de Vacío 2.5 CFM Value",
+    "categoria": "Herramientas",
+    "marca": "Value",
+    "modelo": "2.5CFM",
+    "voltaje": "220V",
+    "costo": 183525,
+    "stock": 0,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2023/02/Bomba-de-vacio-2.5cfm-Value-300x300.png",
+      "https://www.colderman.cl/wp-content/uploads/2023/02/tabla-300x300.png"
     ]
   },
   {
@@ -28,6 +142,34 @@
     ]
   },
   {
+    "codigo": "CMP-0004",
+    "nombre": "Compresor Chevrolet Captiva 2006-2016",
+    "categoria": "Compresores",
+    "marca": "Chevrolet",
+    "modelo": "Captiva",
+    "voltaje": "12V",
+    "costo": 727231,
+    "stock": 1,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2022/09/Compresor-Chevrolet-Captiva-2006-2016-300x300.png",
+      "https://www.colderman.cl/wp-content/uploads/2022/09/1-17-300x300.png"
+    ]
+  },
+  {
+    "codigo": "CMP-0090",
+    "nombre": "Compresor Toyota Hilux",
+    "categoria": "Compresores",
+    "marca": "Toyota",
+    "modelo": "Hilux",
+    "voltaje": "12V",
+    "costo": 796413,
+    "stock": 1,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2022/09/Compresor-Toyota-Hilux-2008-2015-2-300x300.png",
+      "https://www.colderman.cl/wp-content/uploads/2022/09/4-8-300x300.png"
+    ]
+  },
+  {
     "codigo": "CND-22X22",
     "nombre": "Condensador CND-22X22 Universal",
     "categoria": "Condensadores",
@@ -41,6 +183,19 @@
     ]
   },
   {
+    "codigo": "CND-12X20",
+    "nombre": "Condensador Universal 12x20",
+    "categoria": "Condensadores",
+    "marca": "Universal",
+    "modelo": "12x20",
+    "voltaje": "N/A",
+    "costo": 186009,
+    "stock": 0,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2023/02/Condensador-Universal-12x20-1-300x300.png"
+    ]
+  },
+  {
     "codigo": "FLT-0015",
     "nombre": "Filtro Secador Maquinaria",
     "categoria": "Filtros",
@@ -51,6 +206,59 @@
     "stock": 0,
     "fotos": [
       "https://www.colderman.cl/wp-content/uploads/2023/03/Filtro-secador-maquinaria-CASE-macho-macho.png"
+    ]
+  },
+  {
+    "codigo": "FLT-2332",
+    "nombre": "Filtro Secador Maquinaria CASE",
+    "categoria": "Filtros",
+    "marca": "Case",
+    "modelo": "Macho-Macho",
+    "voltaje": "N/A",
+    "costo": 124467,
+    "stock": 0,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2023/03/Filtro-secador-maquinaria-CASE-macho-macho.png"
+    ]
+  },
+  {
+    "codigo": "EVP-7501",
+    "nombre": "Evaporador Universal / Maquinaria",
+    "categoria": "Evaporadores",
+    "marca": "Universal",
+    "modelo": "Estándar",
+    "voltaje": "12V",
+    "costo": 216300,
+    "stock": 1,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2026/06/18.png"
+    ]
+  },
+  {
+    "codigo": "EVP-9102",
+    "nombre": "Evaporador Excavadora Hyundai R220",
+    "categoria": "Evaporadores",
+    "marca": "Hyundai",
+    "modelo": "R220",
+    "voltaje": "24V",
+    "costo": 221651,
+    "stock": 0,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2023/03/2-4-300x300.png"
+    ]
+  },
+  {
+    "codigo": "VAL-0050",
+    "nombre": "Válvula Block Chevrolet Dmax",
+    "categoria": "Válvulas",
+    "marca": "Chevrolet",
+    "modelo": "Dmax",
+    "voltaje": "N/A",
+    "costo": 46341,
+    "stock": 0,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2026/06/5-300x300.jpg",
+      "https://www.colderman.cl/wp-content/uploads/2026/06/6-300x300.jpg"
     ]
   }
 ]
