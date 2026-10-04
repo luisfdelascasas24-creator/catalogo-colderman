@@ -282,15 +282,13 @@ body {
 const SHEET_ID = '1pXIUcd2WNbr29ZWkxOdISj--yTB64vPAxQyfVjOLoQ0';
 const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
 
-const ORDEN_PRIORIDAD = ['Compresores', 'Evaporadores', 'Condensadores', 'Herramientas', 'Filtros', 'Blowers'];
+const ORDEN_PRIORIDAD = ['COMPRESORES', 'EVAPORADORES', 'CONDENSADORES', 'HERRAMIENTAS', 'FILTROS', 'BLOWER'];
 const ICONOS_CATEGORIA = {
-  'Compresores': '⚙️', 'Evaporadores': '❄️', 'Condensadores': '🌬️',
-  'Herramientas': '🛠️', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
-  'Válvulas': '🔩', 'Mangueras / Fittings': '🔗', 'Fittings': '🔗',
-  'Gases / Aceites': '🧴', 'Gases': '🧪', 'Aceites': '🛢️',
-  'Switch / Sensores': '📟', 'Electroventiladores': '🌪️',
-  'Equipos Eléctricos': '🔌', 'Presostatos': '🎚️', 'Termostatos': '🌡️',
-  'Ferrules': '🔗', 'Poleas': '⭕', 'Tapas': '🔘', 'Otros': '📦'
+  'COMPRESORES': '⚙️', 'EVAPORADORES': '❄️', 'CONDENSADORES': '🌬️',
+  'HERRAMIENTAS': '🛠️', 'FILTROS': '🧰', 'BLOWERS': '🌀', 'BLOWER': '🌀',
+  'BOBINAS': '🧲', 'VALVULAS': '🔩', 'FITTING': '🔗', 'FITTINGS': '🔗',
+  'ACEITES': '🛢️', 'PRESOSTATOS': '🎚️', 'ELECTROVENTILADORES': '🌪️',
+  'EQUIPO ELECTRICO': '🔌', 'MANGUERAS': '🔗', 'SWITCH': '📟', 'OTROS': '📦'
 };
 
 let allProducts = [];
@@ -306,15 +304,13 @@ function normalizar(texto) {
 
 function nombreMostrar(p) {
   const base = `${p['Producto'] || ''} ${p['Variante'] || ''}`.trim();
-  return base || p['NombreWeb'] || '(Sin nombre)';
+  return base || '(Sin nombre)';
 }
 
 function construirTextoProducto(p) {
-  const lineas = [`*${nombreMostrar(p)}*`, `Código: ${p['Codigo'] || ''}`];
-  const camposFijos = ['Marca', 'Modelo', 'Ranuras Polea', 'Voltaje', 'Refrigerante', 'Ancho', 'Alto', 'Grosor'];
-  camposFijos.forEach(campo => {
-    if (p[campo] && p[campo] !== 'null') lineas.push(`${campo}: ${p[campo]}`);
-  });
+  const lineas = [`*${nombreMostrar(p)}*`, `Código: ${p['SKU'] || ''}`];
+  if (p['Marca'] && p['Marca'] !== 'null' && p['Marca'] !== '') lineas.push(`Marca: ${p['Marca']}`);
+  if (p['Variante'] && p['Variante'] !== 'null' && p['Variante'] !== '') lineas.push(`Variante/Modelo: ${p['Variante']}`);
   return lineas.join('\n');
 }
 
@@ -324,17 +320,21 @@ async function loadProducts() {
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const rows = json.table.rows;
-    const colNames = ['Tipo de Producto','Producto','Variante','Código de barras','SKU','Stock','Marca','Costo','Foto1','Foto2','Foto3','Foto4','Categoria','NombreWeb','Ancho','Alto','Grosor','SpecsExtra'];
     
+    // ORDEN EXACTO DE LAS 8 COLUMNAS DE BSALE EN GOOGLE SHEETS
+    // [0: Tipo de Producto, 1: Producto, 2: Variante, 3: Código de barras, 4: SKU, 5: Stock, 6: Marca, 7: Costo]
     allProducts = rows.map(row => {
-      const obj = {};
-      colNames.forEach((col, i) => {
-        obj[col] = row.c[i] ? (String(row.c[i].v) || '') : '';
-      });
-      obj['Codigo'] = obj['SKU'] || obj['Código de barras'] || '';
-      obj['Categoria'] = obj['Tipo de Producto'] || 'Otros';
-      return obj;
-    }).filter(p => p['Codigo']);
+      return {
+        'Tipo de Producto': row.c[0] ? (String(row.c[0].v) || 'OTROS') : 'OTROS',
+        'Producto': row.c[1] ? (String(row.c[1].v) || '') : '',
+        'Variante': row.c[2] ? (String(row.c[2].v) || '') : '',
+        'Código de barras': row.c[3] ? (String(row.c[3].v) || '') : '',
+        'SKU': row.c[4] ? (String(row.c[4].v) || '') : '',
+        'Stock': row.c[5] && !isNaN(row.c[5].v) ? Number(row.c[5].v) : 0,
+        'Marca': row.c[6] ? (String(row.c[6].v) || '') : '',
+        'Costo': row.c[7] && !isNaN(row.c[7].v) ? Number(row.c[7].v) : 0
+      };
+    }).filter(p => p['SKU']);
     
     renderTiles();
   } catch(e) {
@@ -345,14 +345,13 @@ async function loadProducts() {
 function renderTiles() {
   const conteo = {};
   allProducts.forEach(p => {
-    let cat = p['Categoria'] || 'Otros';
-    cat = cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
+    let cat = (p['Tipo de Producto'] || 'OTROS').trim().toUpperCase();
     conteo[cat] = (conteo[cat] || 0) + 1;
   });
   
   const categoriasConProductos = Object.keys(conteo);
-  const prioritarias = ORDEN_PRIORIDAD.map(c => c.charAt(0).toUpperCase() + c.slice(1).toLowerCase()).filter(c => categoriasConProductos.includes(c));
-  const resto = categoriasConProductos.filter(c => !prioritarias.includes(c)).sort();
+  const prioritarias = ORDEN_PRIORIDAD.filter(c => categoriasConProductos.includes(c));
+  const resto = categoriasConProductos.filter(c => !ORDEN_PRIORIDAD.includes(c)).sort();
   const ordenFinal = [...prioritarias, ...resto];
 
   const wrap = document.getElementById('catTiles');
@@ -371,11 +370,7 @@ function openCategory(cat) {
   document.getElementById('homeView').classList.add('hidden');
   document.getElementById('listView').classList.remove('hidden');
   document.getElementById('listTitle').textContent = cat;
-  renderList(allProducts.filter(p => {
-    let c = p['Categoria'] || 'Otros';
-    c = c.charAt(0).toUpperCase() + c.slice(1).toLowerCase();
-    return c === cat;
-  }));
+  renderList(allProducts.filter(p => (p['Tipo de Producto'] || 'OTROS').trim().toUpperCase() === cat));
 }
 
 let searchTimer = null;
@@ -436,16 +431,13 @@ function renderList(products, targetId) {
     return;
   }
   list.innerHTML = products.map((p) => {
-    const foto = p['Foto1'] || '';
-    const thumb = foto
-      ? `<img class="product-thumb" src="${foto}" onerror="this.style.display='none'" />`
-      : `<div class="product-thumb-placeholder">📦</div>`;
+    const thumb = `<div class="product-thumb-placeholder">📦</div>`;
     const stockVal = Number(p['Stock']) || 0;
     const stock = `<p class="product-stock" style="color: ${stockVal > 0 ? 'var(--ok)' : 'var(--bad)'};">Stock: ${stockVal}</p>`;
     return `<div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
       ${thumb}
       <div class="product-info">
-        <p class="product-code">${p['Codigo'] || ''}</p>
+        <p class="product-code">${p['SKU'] || ''}</p>
         <p class="product-name">${nombreMostrar(p)}</p>
         ${stock}
       </div>
@@ -461,20 +453,24 @@ function showDetail(idx) {
   document.getElementById('homeView').classList.add('hidden');
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('detailView').classList.add('active');
-  document.getElementById('detailTitle').textContent = currentProduct['Codigo'] || '';
+  document.getElementById('detailTitle').textContent = currentProduct['SKU'] || '';
   document.getElementById('dNombre').textContent = nombreMostrar(currentProduct);
-  document.getElementById('dCodigo').textContent = currentProduct['Codigo'] || '';
+  document.getElementById('dCodigo').textContent = currentProduct['SKU'] || '';
 
-  const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Ancho','Alto','Grosor'];
-  let specsHtml = specs
-    .filter(k => currentProduct[k] && currentProduct[k] !== 'null')
-    .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
-    .join('');
-
-  if (currentProduct['Costo'] && currentProduct['Costo'] !== '0' && currentProduct['Costo'] !== 'null') {
+  let specsHtml = '';
+  if (currentProduct['Marca'] && currentProduct['Marca'] !== 'null' && currentProduct['Marca'] !== '') {
+    specsHtml += `<div class="spec-row"><span class="spec-label">Marca</span><span class="spec-val">${currentProduct['Marca']}</span></div>`;
+  }
+  if (currentProduct['Variante'] && currentProduct['Variante'] !== 'null' && currentProduct['Variante'] !== '') {
+    specsHtml += `<div class="spec-row"><span class="spec-label">Variante / Modelo</span><span class="spec-val">${currentProduct['Variante']}</span></div>`;
+  }
+  if (currentProduct['Código de barras'] && currentProduct['Código de barras'] !== 'null' && currentProduct['Código de barras'] !== '') {
+    specsHtml += `<div class="spec-row"><span class="spec-label">Código de Barras</span><span class="spec-val">${currentProduct['Código de barras']}</span></div>`;
+  }
+  if (currentProduct['Costo'] !== undefined && currentProduct['Costo'] !== 0) {
     specsHtml += `<div class="spec-row"><span class="spec-label">Costo</span><span class="spec-val" style="color:#16324A;">$${Number(currentProduct['Costo']).toLocaleString('es-CL')}</span></div>`;
   }
-  if (currentProduct['Stock'] !== undefined && currentProduct['Stock'] !== '' && currentProduct['Stock'] !== 'null') {
+  if (currentProduct['Stock'] !== undefined) {
     const stock = Number(currentProduct['Stock']);
     const stockColor = stock > 0 ? '#3E7A4D' : '#B94A3D';
     const stockText = stock > 0 ? `${stock} disponibles` : 'Sin stock';
@@ -482,12 +478,9 @@ function showDetail(idx) {
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  // RECOLECCIÓN DE FOTOS CON RESPALDO AUTOMÁTICO PARA CMP-2000
-  let fotos = ['Foto1','Foto2','Foto3','Foto4']
-    .map(k => currentProduct[k])
-    .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
-
-  if (currentProduct['Codigo'] === 'CMP-2000' && fotos.length <= 1) {
+  // FOTOS CON RESPALDO AUTOMÁTICO PARA CMP-2000
+  let fotos = [];
+  if (currentProduct['SKU'] === 'CMP-2000') {
     fotos = [
       'https://www.colderman.cl/wp-content/uploads/2023/11/3-1-300x300.png',
       'https://www.colderman.cl/wp-content/uploads/2023/11/1-1-300x300.png',
