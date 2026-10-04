@@ -10,22 +10,27 @@
     <div class="max-w-4xl mx-auto">
         <header class="text-center my-6">
             <h1 class="text-3xl font-bold text-cyan-400">Catálogo Colderman</h1>
-            <p class="text-slate-400 text-sm">Consulta rápida de stock, costos y modelos</p>
+            <p class="text-slate-400 text-sm">Sistema de consulta rápida en terreno</p>
         </header>
 
-        <!-- Buscador -->
+        <!-- Buscador Inteligente -->
         <div class="mb-4">
-            <input type="text" id="buscador" placeholder="Busca por código, nombre o marca..." 
-                class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 shadow-inner">
+            <input type="text" id="buscador" placeholder="Busca por código (ej: CMP0151, CMP-0151) o nombre..." 
+                class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 text-lg shadow-inner">
         </div>
 
         <!-- Filtros por Categoría -->
         <div id="categorias-container" class="flex gap-2 overflow-x-auto pb-4 mb-4">
-            <button onclick="filtrarCategoria('Todos')" class="cat-btn px-4 py-2 rounded-lg bg-cyan-600 text-white text-sm font-semibold whitespace-nowrap">Todos</button>
-            <button onclick="filtrarCategoria('Compresores')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700">Compresores</button>
-            <button onclick="filtrarCategoria('Condensadores')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700">Condensadores</button>
-            <button onclick="filtrarCategoria('Sopladores')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700">Sopladores</button>
-            <button onclick="filtrarCategoria('Filtros')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700">Filtros</button>
+            <button onclick="filtrarCategoria('Todos')" class="cat-btn px-4 py-2 rounded-lg bg-cyan-600 text-white text-sm font-semibold whitespace-nowrap transition">Todos</button>
+            <button onclick="filtrarCategoria('Compresores')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700 transition">Compresores</button>
+            <button onclick="filtrarCategoria('Condensadores')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700 transition">Condensadores</button>
+            <button onclick="filtrarCategoria('Sopladores')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700 transition">Sopladores</button>
+            <button onclick="filtrarCategoria('Evaporadores')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700 transition">Evaporadores</button>
+            <button onclick="filtrarCategoria('Filtros')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700 transition">Filtros</button>
+            <button onclick="filtrarCategoria('Válvulas')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700 transition">Válvulas</button>
+            <button onclick="filtrarCategoria('Bobinas')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700 transition">Bobinas</button>
+            <button onclick="filtrarCategoria('Herramientas')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700 transition">Herramientas</button>
+            <button onclick="filtrarCategoria('Aceites y Fluidos')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700 transition">Aceites y Fluidos</button>
         </div>
 
         <!-- Contenedor de Resultados -->
@@ -38,33 +43,38 @@
         let productos = [];
         let categoriaActual = 'Todos';
 
+        // Función para limpiar guiones y espacios, haciendo que la búsqueda sea infalible ante errores de tipeo
+        function normalizar(texto) {
+            return (texto || "").toLowerCase().replace(/[-\s]/g, '');
+        }
+
         async function cargarDatos() {
             try {
-                const respuesta = await fetch('productos.json');
+                const respuesta = await fetch('productos.json?v=' + Date.now());
                 productos = await respuesta.json();
                 mostrarProductos(productos);
             } catch (error) {
-                document.getElementById('resultado').innerHTML = '<p class="text-red-400 text-center">Error al cargar el catálogo.</p>';
+                document.getElementById('resultado').innerHTML = '<p class="text-red-400 text-center">Error al cargar el catálogo de productos.</p>';
             }
         }
 
         function mostrarProductos(lista) {
             const contenedor = document.getElementById('resultado');
             if (lista.length === 0) {
-                contenedor.innerHTML = '<p class="text-center text-slate-400">No se encontraron productos.</p>';
+                contenedor.innerHTML = '<p class="text-center text-slate-400 py-8">No se encontraron productos con esos criterios.</p>';
                 return;
             }
 
             contenedor.innerHTML = lista.map(p => `
                 <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col md:flex-row gap-4 items-center shadow-lg">
-                    <img src="${p.fotos[0] || 'https://via.placeholder.com/150'}" alt="${p.nombre}" class="w-24 h-24 object-contain bg-white rounded-lg p-1">
+                    <img src="${p.fotos && p.fotos.length > 0 ? p.fotos[0] : 'https://via.placeholder.com/150'}" alt="${p.nombre}" class="w-28 h-28 object-contain bg-white rounded-lg p-1">
                     <div class="flex-1 w-full text-left">
                         <div class="flex justify-between items-start">
                             <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2 py-1 rounded">${p.codigo}</span>
                             <span class="text-sm font-bold ${p.stock > 0 ? 'text-emerald-400' : 'text-rose-400'}">Stock: ${p.stock}</span>
                         </div>
                         <h2 class="text-lg font-bold text-white mt-1">${p.nombre}</h2>
-                        <p class="text-xs text-slate-400">Cat: ${p.categoria || 'General'} | Modelo: ${p.modelo || 'N/A'} | Voltaje: ${p.voltaje || 'N/A'}</p>
+                        <p class="text-xs text-slate-400 mt-1">Cat: ${p.categoria || 'General'} | Modelo: ${p.modelo || 'N/A'} | Voltaje: ${p.voltaje || 'N/A'}</p>
                         <p class="text-cyan-400 font-semibold mt-2">Costo: $${p.costo.toLocaleString('es-CL')}</p>
                     </div>
                 </div>
@@ -77,12 +87,23 @@
         }
 
         function aplicarFiltros() {
-            const texto = document.getElementById('buscador').value.toLowerCase();
+            const inputTexto = document.getElementById('buscador').value;
+            const textoBusquedaNorm = normalizar(inputTexto);
+
             const filtrados = productos.filter(p => {
                 const coincideCat = (categoriaActual === 'Todos' || p.categoria === categoriaActual);
-                const coincideTexto = p.codigo.toLowerCase().includes(texto) || 
-                                      p.nombre.toLowerCase().includes(texto) ||
-                                      (p.marca && p.marca.toLowerCase().includes(texto));
+                
+                // Búsqueda normalizada (ignora guiones y espacios entre Bsale y WordPress)
+                const codigoNorm = normalizar(p.codigo);
+                const nombreNorm = normalizar(p.nombre);
+                const marcaNorm = normalizar(p.marca);
+                const modeloNorm = normalizar(p.modelo);
+
+                const coincideTexto = codigoNorm.includes(textoBusquedaNorm) || 
+                                      nombreNorm.includes(textoBusquedaNorm) ||
+                                      marcaNorm.includes(textoBusquedaNorm) ||
+                                      modeloNorm.includes(textoBusquedaNorm);
+
                 return coincideCat && coincideTexto;
             });
             mostrarProductos(filtrados);
