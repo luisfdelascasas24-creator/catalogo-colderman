@@ -117,19 +117,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
   </div>
 </div>
 <script>
-const SHEET_ID = '1pXIUcd2WNbr29ZWkxOdISj--yTB64vPAxQyfVjOLoQ0';
-const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
-
-const ORDEN_PRIORIDAD = ['Compresores', 'Evaporadores', 'Condensadores', 'Herramientas', 'Filtros', 'Blowers'];
-const ICONOS_CATEGORIA = {
-  'Compresores': '⚙️', 'Evaporadores': '❄️', 'Condensadores': '🌬️',
-  'Herramientas': '🛠️', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
-  'Válvulas': '🔩', 'Mangueras / Fittings': '🔗', 'Fittings': '🔗',
-  'Gases / Aceites': '🧴', 'Gases': '🧪', 'Aceites': '🛢️',
-  'Switch / Sensores': '📟', 'Electroventiladores': '🌪️',
-  'Equipos Eléctricos': '🔌', 'Presostatos': '🎚️', 'Termostatos': '🌡️',
-  'Ferrules': '🔗', 'Poleas': '⭕', 'Tapas': '🔘', 'Otros': '📦'
-};
+const URL = 'https://script.google.com/macros/s/AKfycbyYUIYKKbrziqch6O72-sHGRXHvZyDIFMb3N3jacHEJh2Mzj6RWsoMZqXqJy_HZ6exr/exec';
 
 let allProducts = [];
 let currentProduct = null;
@@ -143,32 +131,38 @@ function normalizar(texto) {
 }
 
 function nombreMostrar(p) {
-  const base = `${p['Producto'] || ''} ${p['Item'] || ''}`.trim();
-  return base || p['NombreWeb'] || '(Sin nombre)';
+  const base = `${p['Producto'] || ''} ${p['Variante'] || ''}`.trim();
+  return base || '(Sin nombre)';
 }
 
 function construirTextoProducto(p) {
   const lineas = [`*${nombreMostrar(p)}*`, `Código: ${p['Codigo'] || ''}`];
-  const camposFijos = ['Marca', 'Modelo', 'Ranuras Polea', 'Voltaje', 'Refrigerante', 'Ancho', 'Alto', 'Grosor'];
-  camposFijos.forEach(campo => {
-    if (p[campo] && p[campo] !== 'null') lineas.push(`${campo}: ${p[campo]}`);
-  });
+  if (p['Marca']) lineas.push(`Marca: ${p['Marca']}`);
+  if (p['Variante']) lineas.push(`Modelo: ${p['Variante']}`);
   return lineas.join('\n');
 }
 
 async function loadProducts() {
   try {
     const res = await fetch(URL);
-    const text = await res.text();
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
-    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Costo','Stock','Categoria','NombreWeb','Ancho','Alto','Grosor','SpecsExtra'];
+    const data = await res.json();
+    const rows = data.table.rows;
     allProducts = rows.map(row => {
-      const obj = {};
-      colNames.forEach((col, i) => {
-        obj[col] = row.c[i] ? (String(row.c[i].v) || '') : '';
-      });
-      return obj;
+      return {
+        'Codigo': row.c[0] ? row.c[0].v : '',
+        'Producto': row.c[1] ? row.c[1].v : '',
+        'Variante': row.c[2] ? row.c[2].v : '',
+        'Código de barras': row.c[3] ? row.c[3].v : '',
+        'SKU': row.c[4] ? row.c[4].v : '',
+        'Stock': row.c[5] ? row.c[5].v : 0,
+        'Marca': row.c[6] ? row.c[6].v : '',
+        'Costo': row.c[7] ? row.c[7].v : 0,
+        'Categoria': row.c[8] ? row.c[8].v : 'OTROS',
+        'Foto1': row.c[9] ? row.c[9].v : '',
+        'Foto2': row.c[10] ? row.c[10].v : '',
+        'Foto3': row.c[11] ? row.c[11].v : '',
+        'Foto4': row.c[12] ? row.c[12].v : ''
+      };
     }).filter(p => p['Codigo']);
     renderTiles();
   } catch(e) {
@@ -179,18 +173,14 @@ async function loadProducts() {
 function renderTiles() {
   const conteo = {};
   allProducts.forEach(p => {
-    const cat = p['Categoria'] || 'Otros';
+    const cat = (p['Categoria'] || 'OTROS').toUpperCase();
     conteo[cat] = (conteo[cat] || 0) + 1;
   });
-  const categoriasConProductos = Object.keys(conteo);
-  const prioritarias = ORDEN_PRIORIDAD.filter(c => categoriasConProductos.includes(c));
-  const resto = categoriasConProductos.filter(c => !ORDEN_PRIORIDAD.includes(c)).sort();
-  const ordenFinal = [...prioritarias, ...resto];
-
+  const categoriasConProductos = Object.keys(conteo).sort();
   const wrap = document.getElementById('catTiles');
-  wrap.innerHTML = ordenFinal.map(cat => `
+  wrap.innerHTML = categoriasConProductos.map(cat => `
     <div class="cat-tile" onclick="openCategory('${cat.replace(/'/g, "\\'")}')">
-      <span class="cat-tile-icon">${ICONOS_CATEGORIA[cat] || '📦'}</span>
+      <span class="cat-tile-icon">📦</span>
       <span class="cat-tile-name">${cat}</span>
       <span class="cat-tile-count">${conteo[cat]} productos</span>
     </div>
@@ -203,7 +193,7 @@ function openCategory(cat) {
   document.getElementById('homeView').classList.add('hidden');
   document.getElementById('listView').classList.remove('hidden');
   document.getElementById('listTitle').textContent = cat;
-  renderList(allProducts.filter(p => (p['Categoria'] || 'Otros') === cat));
+  renderList(allProducts.filter(p => (p['Categoria'] || 'OTROS').toUpperCase() === cat));
 }
 
 let searchTimer = null;
@@ -268,13 +258,13 @@ function renderList(products, targetId) {
     const thumb = foto
       ? `<img class="product-thumb" src="${foto}" onerror="this.style.display='none'" />`
       : `<div class="product-thumb-placeholder">📦</div>`;
-    const stock = p['Stock'] && p['Stock'] !== '0' && p['Stock'] !== 'null'
-      ? `<p class="product-stock">Stock: ${p['Stock']}</p>` : '';
+    const stockVal = Number(p['Stock']) || 0;
+    const stock = `<p class="product-stock" style="color: ${stockVal > 0 ? 'var(--ok)' : 'var(--bad)'};">Stock: ${stockVal}</p>`;
     return `<div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
       ${thumb}
       <div class="product-info">
         <p class="product-code">${p['Codigo'] || ''}</p>
-        <p class="product-name">${nombreMostrar(p)} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
+        <p class="product-name">${nombreMostrar(p)}</p>
         ${stock}
       </div>
       <span class="arrow">›</span>
@@ -293,26 +283,28 @@ function showDetail(idx) {
   document.getElementById('dNombre').textContent = nombreMostrar(currentProduct);
   document.getElementById('dCodigo').textContent = currentProduct['Codigo'] || '';
 
-  const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Ancho','Alto','Grosor'];
-  let specsHtml = specs
-    .filter(k => currentProduct[k] && currentProduct[k] !== 'null')
-    .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
-    .join('');
-
-  if (currentProduct['Costo'] && currentProduct['Costo'] !== '0' && currentProduct['Costo'] !== 'null') {
-    specsHtml += `<div class="spec-row"><span class="spec-label">Costo</span><span class="spec-val" style="color:#16324A;">$${Number(currentProduct['Costo']).toLocaleString('es-CL')}</span></div>`;
-  }
-  if (currentProduct['Stock'] !== undefined && currentProduct['Stock'] !== '' && currentProduct['Stock'] !== 'null') {
+  let specsHtml = '';
+  if (currentProduct['Marca']) specsHtml += `<div class="spec-row"><span class="spec-label">Marca</span><span class="spec-val">${currentProduct['Marca']}</span></div>`;
+  if (currentProduct['Variante']) specsHtml += `<div class="spec-row"><span class="spec-label">Modelo</span><span class="spec-val">${currentProduct['Variante']}</span></div>`;
+  if (currentProduct['Costo']) specsHtml += `<div class="spec-row"><span class="spec-label">Costo</span><span class="spec-val" style="color:#16324A;">$${Number(currentProduct['Costo']).toLocaleString('es-CL')}</span></div>`;
+  if (currentProduct['Stock'] !== undefined) {
     const stock = Number(currentProduct['Stock']);
-    const stockColor = stock > 0 ? '#3E7A4D' : '#B94A3D';
-    const stockText = stock > 0 ? `${stock} disponibles` : 'Sin stock';
-    specsHtml += `<div class="spec-row"><span class="spec-label">Stock</span><span class="spec-val" style="color:${stockColor};">${stockText}</span></div>`;
+    specsHtml += `<div class="spec-row"><span class="spec-label">Stock</span><span class="spec-val" style="color:${stock > 0 ? '#3E7A4D' : '#B94A3D'};">${stock} disponibles</span></div>`;
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  const fotos = ['Foto1','Foto2','Foto3','Foto4']
+  // RECOLECCIÓN DE FOTOS CON RESPALDO AUTOMÁTICO PARA CMP-2000
+  let fotos = ['Foto1','Foto2','Foto3','Foto4']
     .map(k => currentProduct[k])
     .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
+
+  if (currentProduct['Codigo'] === 'CMP-2000' && fotos.length <= 1) {
+    fotos = [
+      'https://www.colderman.cl/wp-content/uploads/2023/11/3-1-300x300.png',
+      'https://www.colderman.cl/wp-content/uploads/2023/11/1-1-300x300.png',
+      'https://www.colderman.cl/wp-content/uploads/2023/11/2-1-300x300.png'
+    ];
+  }
 
   const grid = document.getElementById('photosGrid');
   if (fotos.length === 0) {
@@ -385,7 +377,7 @@ async function shareEverything() {
       throw new Error("No compatible");
     }
   } catch(e) {
-    const links = `\n\nFotos:\n${selectedPhotos.join('./')}`;
+    const links = `\n\nFotos:\n${selectedPhotos.join('\n')}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text + links)}`, '_blank');
   } finally {
     btn.textContent = '💬 Enviar por WhatsApp';
