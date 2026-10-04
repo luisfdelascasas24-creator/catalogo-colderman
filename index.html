@@ -312,7 +312,7 @@ function showDetail(idx) {
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  // CARGA DE FOTOS LIMPIA: Solo toma las de la hoja o las 2 correctas del CMP-2000
+  // LAS 3 FOTOS OFICIALES GARANTIZADAS PARA EL CMP-2000
   let fotos = ['Foto1','Foto2','Foto3','Foto4']
     .map(k => currentProduct[k])
     .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
@@ -320,7 +320,8 @@ function showDetail(idx) {
   if (currentProduct['Codigo'] === 'CMP-2000') {
     fotos = [
       'https://www.colderman.cl/wp-content/uploads/2023/11/3-1-300x300.png',
-      'https://www.colderman.cl/wp-content/uploads/2023/11/1-1-300x300.png'
+      'https://www.colderman.cl/wp-content/uploads/2023/11/1-1-300x300.png',
+      'https://www.colderman.cl/wp-content/uploads/2023/11/2-1-300x300.png'
     ];
   }
 
