@@ -279,18 +279,15 @@ body {
 </div>
 
 <script>
-const SHEET_ID = '1pXIUcd2WNbr29ZWkxOdISj--yTB64vPAxQyfVjOLoQ0';
-const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
+// URL de tu Apps Script conectado al Google Sheet de inventario Bsale
+const URL = 'https://script.google.com/macros/s/AKfycbzBdaylYVtWId1eW0HcIkp9CGW55GWAtHBJ80CsT7a48N5siH9K75gDiNdxQVoLXOHS/exec';
 
-const ORDEN_PRIORIDAD = ['Compresores', 'Evaporadores', 'Condensadores', 'Herramientas', 'Filtros', 'Blowers'];
+const ORDEN_PRIORIDAD = ['COMPRESORES', 'EVAPORADORES', 'CONDENSADORES', 'HERRAMIENTAS', 'FILTROS', 'BLOWER'];
 const ICONOS_CATEGORIA = {
-  'Compresores': '⚙️', 'Evaporadores': '❄️', 'Condensadores': '🌬️',
-  'Herramientas': '🛠️', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
-  'Válvulas': '🔩', 'Mangueras / Fittings': '🔗', 'Fittings': '🔗',
-  'Gases / Aceites': '🧴', 'Gases': '🧪', 'Aceites': '🛢️',
-  'Switch / Sensores': '📟', 'Electroventiladores': '🌪️',
-  'Equipos Eléctricos': '🔌', 'Presostatos': '🎚️', 'Termostatos': '🌡️',
-  'Ferrules': '🔗', 'Poleas': '⭕', 'Tapas': '🔘', 'Otros': '📦'
+  'COMPRESORES': '⚙️', 'EVAPORADORES': '❄️', 'CONDENSADORES': '🌬️',
+  'HERRAMIENTAS': '🛠️', 'FILTROS': '🧰', 'BLOWER': '🌀', 'BOBINAS': '🧲',
+  'VALVULAS': '🔩', 'FITTING': '🔗', 'ACEITES': '🛢️', 'PRESOSTATOS': '🎚️',
+  'ELECTROVENTILADORES': '🌪️', 'EQUIPO ELECTRICO': '🔌', 'MANGUERAS': '🔗', 'SWITCH': '📟', 'OTROS': '📦'
 };
 
 let allProducts = [];
@@ -305,41 +302,41 @@ function normalizar(texto) {
 }
 
 function nombreMostrar(p) {
-  const base = `${p['Producto'] || ''} ${p['Item'] || ''}`.trim();
-  return base || p['NombreWeb'] || '(Sin nombre)';
+  const base = `${p['Producto'] || ''} ${p['Variante'] || ''}`.trim();
+  return base || '(Sin nombre)';
 }
 
 function construirTextoProducto(p) {
   const lineas = [`*${nombreMostrar(p)}*`, `Código: ${p['Codigo'] || ''}`];
-  const camposFijos = ['Marca', 'Modelo', 'Ranuras Polea', 'Voltaje', 'Refrigerante', 'Ancho', 'Alto', 'Grosor'];
-  camposFijos.forEach(campo => {
-    if (p[campo] && p[campo] !== 'null') lineas.push(`${campo}: ${p[campo]}`);
-  });
-  try {
-    const extra = JSON.parse(p['SpecsExtra'] || '{}');
-    Object.keys(extra).forEach(label => {
-      if (!extra[label]) return;
-      const labelBonito = label.toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
-      lineas.push(`${labelBonito}: ${extra[label]}`);
-    });
-  } catch(e) {}
+  if (p['Marca'] && p['Marca'] !== 'null' && p['Marca'] !== '') lineas.push(`Marca: ${p['Marca']}`);
+  if (p['Variante'] && p['Variante'] !== 'null' && p['Variante'] !== '') lineas.push(`Variante/Modelo: ${p['Variante']}`);
   return lineas.join('\n');
 }
 
 async function loadProducts() {
   try {
     const res = await fetch(URL);
-    const text = await res.text();
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
-    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Costo','Stock','Categoria','NombreWeb','Ancho','Alto','Grosor','SpecsExtra'];
+    const data = await res.json();
+    const rows = data.table.rows;
+    
     allProducts = rows.map(row => {
-      const obj = {};
-      colNames.forEach((col, i) => {
-        obj[col] = row.c[i] ? (String(row.c[i].v) || '') : '';
-      });
-      return obj;
+      return {
+        'Codigo': row.c[0] ? row.c[0].v : '',
+        'Producto': row.c[1] ? row.c[1].v : '',
+        'Variante': row.c[2] ? row.c[2].v : '',
+        'Código de barras': row.c[3] ? row.c[3].v : '',
+        'SKU': row.c[4] ? row.c[4].v : '',
+        'Stock': row.c[5] ? row.c[5].v : 0,
+        'Marca': row.c[6] ? row.c[6].v : '',
+        'Costo': row.c[7] ? row.c[7].v : 0,
+        'Categoria': row.c[8] ? row.c[8].v : 'OTROS',
+        'Foto1': row.c[9] ? row.c[9].v : '',
+        'Foto2': row.c[10] ? row.c[10].v : '',
+        'Foto3': row.c[11] ? row.c[11].v : '',
+        'Foto4': row.c[12] ? row.c[12].v : ''
+      };
     }).filter(p => p['Codigo']);
+
     renderTiles();
   } catch(e) {
     document.getElementById('catTiles').innerHTML = '<div class="empty">Error cargando productos. Verifica la conexión.</div>';
@@ -349,7 +346,7 @@ async function loadProducts() {
 function renderTiles() {
   const conteo = {};
   allProducts.forEach(p => {
-    const cat = p['Categoria'] || 'Otros';
+    const cat = (p['Categoria'] || 'OTROS').toUpperCase();
     conteo[cat] = (conteo[cat] || 0) + 1;
   });
   const categoriasConProductos = Object.keys(conteo);
@@ -373,7 +370,7 @@ function openCategory(cat) {
   document.getElementById('homeView').classList.add('hidden');
   document.getElementById('listView').classList.remove('hidden');
   document.getElementById('listTitle').textContent = cat;
-  renderList(allProducts.filter(p => (p['Categoria'] || 'Otros') === cat));
+  renderList(allProducts.filter(p => (p['Categoria'] || 'OTROS').toUpperCase() === cat));
 }
 
 let searchTimer = null;
@@ -438,13 +435,13 @@ function renderList(products, targetId) {
     const thumb = foto
       ? `<img class="product-thumb" src="${foto}" onerror="this.style.display='none'" />`
       : `<div class="product-thumb-placeholder">📦</div>`;
-    const stock = p['Stock'] && p['Stock'] !== '0' && p['Stock'] !== 'null'
-      ? `<p class="product-stock">Stock: ${p['Stock']}</p>` : '';
+    const stockVal = Number(p['Stock']) || 0;
+    const stock = `<p class="product-stock" style="color: ${stockVal > 0 ? 'var(--ok)' : 'var(--bad)'};">Stock: ${stockVal}</p>`;
     return `<div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
       ${thumb}
       <div class="product-info">
         <p class="product-code">${p['Codigo'] || ''}</p>
-        <p class="product-name">${nombreMostrar(p)} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
+        <p class="product-name">${nombreMostrar(p)}</p>
         ${stock}
       </div>
       <span class="arrow">›</span>
@@ -452,7 +449,7 @@ function renderList(products, targetId) {
   }).join('');
 }
 
-async function showDetail(idx) {
+function showDetail(idx) {
   savedScrollY = window.scrollY;
   currentProduct = allProducts[idx];
   selectedPhotos = [];
@@ -463,23 +460,17 @@ async function showDetail(idx) {
   document.getElementById('dNombre').textContent = nombreMostrar(currentProduct);
   document.getElementById('dCodigo').textContent = currentProduct['Codigo'] || '';
 
-  const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Ancho','Alto','Grosor'];
-  let specsHtml = specs
-    .filter(k => currentProduct[k] && currentProduct[k] !== 'null')
-    .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
-    .join('');
-
-  try {
-    const extra = JSON.parse(currentProduct['SpecsExtra'] || '{}');
-    Object.keys(extra).forEach(label => {
-      const valor = extra[label];
-      if (!valor) return;
-      const labelBonito = label.toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
-      specsHtml += `<div class="spec-row"><span class="spec-label">${labelBonito}</span><span class="spec-val">${valor}</span></div>`;
-    });
-  } catch(e) {}
-
-  if (currentProduct['Costo'] && currentProduct['Costo'] !== '0' && currentProduct['Costo'] !== 'null') {
+  let specsHtml = '';
+  if (currentProduct['Marca'] && currentProduct['Marca'] !== 'null' && currentProduct['Marca'] !== '') {
+    specsHtml += `<div class="spec-row"><span class="spec-label">Marca</span><span class="spec-val">${currentProduct['Marca']}</span></div>`;
+  }
+  if (currentProduct['Variante'] && currentProduct['Variante'] !== 'null' && currentProduct['Variante'] !== '') {
+    specsHtml += `<div class="spec-row"><span class="spec-label">Variante / Modelo</span><span class="spec-val">${currentProduct['Variante']}</span></div>`;
+  }
+  if (currentProduct['Código de barras'] && currentProduct['Código de barras'] !== 'null' && currentProduct['Código de barras'] !== '') {
+    specsHtml += `<div class="spec-row"><span class="spec-label">Código de Barras</span><span class="spec-val">${currentProduct['Código de barras']}</span></div>`;
+  }
+  if (currentProduct['Costo'] !== undefined && currentProduct['Costo'] !== '' && currentProduct['Costo'] !== 'null') {
     specsHtml += `<div class="spec-row"><span class="spec-label">Costo</span><span class="spec-val" style="color:#16324A;">$${Number(currentProduct['Costo']).toLocaleString('es-CL')}</span></div>`;
   }
   if (currentProduct['Stock'] !== undefined && currentProduct['Stock'] !== '' && currentProduct['Stock'] !== 'null') {
@@ -490,47 +481,16 @@ async function showDetail(idx) {
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  // 1. Cargamos primero las fotos que ya existan en la hoja de cálculo
   let fotos = ['Foto1','Foto2','Foto3','Foto4']
     .map(k => currentProduct[k])
     .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
 
-  renderGridFotos(fotos);
-
-  // 2. Consulta en vivo a la API REST de WooCommerce para traer TODAS las imágenes de la galería real
-  if (currentProduct['Codigo']) {
-    try {
-      const consumerKey = 'ck_cb263b71000d4d2e26fc1fec8ddf776da281a969';
-      const consumerSecret = 'cs_f92ddd1f880e1bd3b2d6dc1d6d8251c7e00ceef';
-      // Usamos un proxy público de CORS para evitar que el navegador bloquee la petición directa a WordPress
-      const apiUrl = `https://www.colderman.cl/wp-json/wc/v3/products?sku=${encodeURIComponent(currentProduct['Codigo'])}`;
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}&consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`;
-      
-      const res = await fetch(`https://www.colderman.cl/wp-json/wc/v3/products?sku=${encodeURIComponent(currentProduct['Codigo'])}`, {
-        headers: {
-          'Authorization': 'Basic ' + btoa(consumerKey + ':' + consumerSecret)
-        }
-      });
-      const items = await res.json();
-      if (items && items.length > 0 && items[0].images && items[0].images.length > 0) {
-        const fotosWeb = items[0].images.map(img => img.src);
-        if (fotosWeb.length > 0) {
-          renderGridFotos(fotosWeb);
-        }
-      }
-    } catch(err) {
-      // Si la red o CORS bloquea la API, la app se queda segura mostrando las fotos del Google Sheet sin romperse.
-    }
-  }
-}
-
-function renderGridFotos(fotos) {
   const grid = document.getElementById('photosGrid');
-  if (!fotos || fotos.length === 0) {
+  if (fotos.length === 0) {
     grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#B7BBC0;font-size:13px;">Sin fotos cargadas</div>';
   } else {
     grid.innerHTML = fotos.map((urlFoto, i) => `
-      <div class="photo-item ${selectedPhotos.includes(urlFoto) ? 'selected' : ''}" id="photo-${i}" onclick="togglePhoto(${i}, '${urlFoto}')">
+      <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${urlFoto}')">
         <img src="${urlFoto}" onerror="this.parentElement.style.display='none'" />
         <div class="photo-check">✓</div>
       </div>`).join('');
