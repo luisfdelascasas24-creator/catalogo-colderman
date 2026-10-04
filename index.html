@@ -27,209 +27,54 @@
   --card: #FFFFFF;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-}
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
 .app { max-width: 480px; margin: 0 auto; background: var(--bg); min-height: 100vh; }
-
-.topbar {
-  background: var(--card);
-  padding: 18px 18px 12px;
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  border-bottom: 1px solid var(--line);
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-.topbar-title {
-  color: var(--ink);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 800;
-  font-size: 20px;
-  letter-spacing: -0.01em;
-}
-.back-btn {
-  color: var(--accent);
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-}
-
-.search-wrap { padding: 14px 16px 10px; background: var(--bg); }
-.search-wrap input {
-  width: 100%;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: 1.5px solid var(--line);
-  background: var(--card);
-  color: var(--ink);
-  outline: none;
-}
-.search-wrap input:focus { border-color: var(--accent); }
-
-.count-badge {
-  font-family: 'Inter', sans-serif;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-  padding: 2px 16px 10px;
-}
-
+.topbar { background: var(--card); padding: 18px; display: flex; align-items: baseline; gap: 10px; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+.topbar-title { color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 20px; }
+.back-btn { color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; background: none; border: none; }
+.search-wrap { padding: 14px 16px 10px; }
+.search-wrap input { width: 100%; font-size: 14px; padding: 12px 16px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); outline: none; }
+.count-badge { font-size: 12.5px; color: var(--ink-soft); padding: 2px 16px 10px; }
 .product-list { padding: 0 12px 20px; display: flex; flex-direction: column; gap: 10px; }
-.product-card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 12px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(22,24,29,0.04);
-}
-.product-card:active { background: #F6F6F6; }
+.product-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: flex; gap: 12px; align-items: center; cursor: pointer; }
 .product-thumb { width: 60px; height: 60px; border-radius: 12px; background: var(--bg); object-fit: cover; flex-shrink: 0; }
-.product-thumb-placeholder {
-  width: 60px; height: 60px; border-radius: 12px; background: var(--bg);
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  color: #C7CBD1; font-size: 22px;
-}
+.product-thumb-placeholder { width: 60px; height: 60px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; color: #C7CBD1; font-size: 22px; flex-shrink: 0; }
 .product-info { flex: 1; min-width: 0; }
-.product-code {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-}
-.product-name {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  color: var(--ink-soft);
-  margin-top: 2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.product-stock { font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 600; color: var(--ok); margin-top: 4px; }
+.product-code { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 800; color: var(--ink); }
+.product-name { font-size: 13px; color: var(--ink-soft); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.product-stock { font-size: 11.5px; font-weight: 600; color: var(--ok); margin-top: 4px; }
 .arrow { color: #C7CBD1; font-size: 18px; }
-
 .detail-view { display: none; }
 .detail-view.active { display: block; }
-
-@keyframes viewEnter {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.home-view:not(.hidden), .list-view:not(.hidden), .detail-view.active {
-  animation: viewEnter 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-}
 .hidden { display: none !important; }
-
-.cat-tiles {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 6px 16px 20px;
-}
-.cat-tile {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 18px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(22,24,29,0.04);
-}
-.cat-tile:active { background: #F6F6F6; }
+.cat-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 6px 16px 20px; }
+.cat-tile { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 14px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
 .cat-tile-icon { font-size: 26px; margin-bottom: 4px; }
-.cat-tile-name {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 700;
-  font-size: 15.5px;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-}
-.cat-tile-count {
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-
+.cat-tile-name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15.5px; color: var(--ink); }
+.cat-tile-count { font-size: 12px; color: var(--ink-soft); }
 .photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 14px; background: #F1F1EF; }
-.photo-item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s, transform 0.12s ease; background: #fff; }
-.photo-item:active { transform: scale(0.96); }
+.photo-item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; background: #fff; }
 .photo-item.selected { border-color: var(--accent); }
 .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photo-check {
-  position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 100px;
-  background: var(--accent); display: none; align-items: center; justify-content: center;
-  color: white; font-size: 12px;
-}
+.photo-check { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 100px; background: var(--accent); display: none; align-items: center; justify-content: center; color: white; font-size: 12px; }
 .photo-item.selected .photo-check { display: flex; }
-
 .detail-body { padding: 18px; }
-.detail-code-tag {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-  margin-bottom: 4px;
-}
-.detail-name {
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  color: var(--ink-soft);
-  line-height: 1.3;
-}
-.specs-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--ink-soft);
-  margin: 20px 0 4px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-}
+.detail-code-tag { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+.detail-name { font-size: 15px; color: var(--ink-soft); }
+.specs-title { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); margin: 20px 0 4px; padding-top: 14px; border-top: 1px solid var(--line); }
 .spec-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-.spec-label { font-family: 'Inter', sans-serif; color: var(--ink-soft); }
-.spec-val { font-family: 'Inter', sans-serif; color: var(--ink); font-weight: 600; }
-
+.spec-label { color: var(--ink-soft); }
+.spec-val { color: var(--ink); font-weight: 600; }
 .actions { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
-.btn-copy {
-  width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--line);
-  background: var(--card); color: var(--ink); font-family: 'Inter', sans-serif;
-  font-size: 14px; font-weight: 600; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.btn-copy:active { background: #F6F6F6; }
-.btn-wsp {
-  width: 100%; padding: 15px; border-radius: 12px; border: none; background: #25D366;
-  color: white; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-}
+.btn-copy { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-wsp { width: 100%; padding: 15px; border-radius: 12px; border: none; background: #25D366; color: white; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
 .btn-wsp:disabled { background: #D8DAD6; }
-.btn-wsp:active { background: #1da851; }
-.select-hint { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--ink-soft); text-align: center; }
-.copied-msg { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ok); text-align: center; font-weight: 600; display: none; }
-.empty { padding: 3rem; text-align: center; color: var(--ink-soft); font-family: 'Inter', sans-serif; font-size: 14px; }
-.loading { padding: 3rem; text-align: center; color: var(--ink-soft); font-family: 'Inter', sans-serif; font-size: 14px; }
+.select-hint { font-size: 12px; color: var(--ink-soft); text-align: center; }
+.copied-msg { font-size: 13px; color: var(--ok); text-align: center; font-weight: 600; display: none; }
+.empty, .loading { padding: 3rem; text-align: center; color: var(--ink-soft); }
 </style>
 </head>
 <body>
-
 <div class="app">
   <div class="home-view" id="homeView">
     <div class="topbar">
@@ -243,7 +88,6 @@ body {
     <div id="homeCount" class="count-badge hidden"></div>
     <div id="homeResults" class="product-list hidden"></div>
   </div>
-
   <div class="list-view hidden" id="listView">
     <div class="topbar">
       <button class="back-btn" onclick="goHome()">‹ Volver</button>
@@ -252,7 +96,6 @@ body {
     <div id="productCount" class="count-badge"></div>
     <div id="productList" class="product-list"></div>
   </div>
-
   <div class="detail-view" id="detailView">
     <div class="topbar">
       <button class="back-btn" onclick="goBack()">‹ Volver</button>
@@ -266,29 +109,26 @@ body {
       <div id="specsContainer"></div>
     </div>
     <div class="actions">
-      <button class="btn-copy" onclick="copyText()">
-        📋 Copiar datos del producto
-      </button>
+      <button class="btn-copy" onclick="copyText()">📋 Copiar datos del producto</button>
       <div class="copied-msg" id="copiedMsg">✓ Datos copiados al portapapeles</div>
-      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>
-        💬 Enviar por WhatsApp
-      </button>
+      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>💬 Enviar por WhatsApp</button>
       <p class="select-hint" id="selectHint">Selecciona las fotos que quieres enviar</p>
     </div>
   </div>
 </div>
-
 <script>
 const SHEET_ID = '1pXIUcd2WNbr29ZWkxOdISj--yTB64vPAxQyfVjOLoQ0';
 const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
 
-const ORDEN_PRIORIDAD = ['COMPRESORES', 'EVAPORADORES', 'CONDENSADORES', 'HERRAMIENTAS', 'FILTROS', 'BLOWER'];
+const ORDEN_PRIORIDAD = ['Compresores', 'Evaporadores', 'Condensadores', 'Herramientas', 'Filtros', 'Blowers'];
 const ICONOS_CATEGORIA = {
-  'COMPRESORES': '⚙️', 'EVAPORADORES': '❄️', 'CONDENSADORES': '🌬️',
-  'HERRAMIENTAS': '🛠️', 'FILTROS': '🧰', 'BLOWERS': '🌀', 'BLOWER': '🌀',
-  'BOBINAS': '🧲', 'VALVULAS': '🔩', 'FITTING': '🔗', 'FITTINGS': '🔗',
-  'ACEITES': '🛢️', 'PRESOSTATOS': '🎚️', 'ELECTROVENTILADORES': '🌪️',
-  'EQUIPO ELECTRICO': '🔌', 'MANGUERAS': '🔗', 'SWITCH': '📟', 'OTROS': '📦'
+  'Compresores': '⚙️', 'Evaporadores': '❄️', 'Condensadores': '🌬️',
+  'Herramientas': '🛠️', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
+  'Válvulas': '🔩', 'Mangueras / Fittings': '🔗', 'Fittings': '🔗',
+  'Gases / Aceites': '🧴', 'Gases': '🧪', 'Aceites': '🛢️',
+  'Switch / Sensores': '📟', 'Electroventiladores': '🌪️',
+  'Equipos Eléctricos': '🔌', 'Presostatos': '🎚️', 'Termostatos': '🌡️',
+  'Ferrules': '🔗', 'Poleas': '⭕', 'Tapas': '🔘', 'Otros': '📦'
 };
 
 let allProducts = [];
@@ -296,21 +136,23 @@ let currentProduct = null;
 let selectedPhotos = [];
 let activeCat = '';
 let previousView = 'list';
-let savedScrollY = '';
+let savedScrollY = 0;
 
 function normalizar(texto) {
   return (texto || "").toLowerCase().replace(/[-\s]/g, '');
 }
 
 function nombreMostrar(p) {
-  const base = `${p['Producto'] || ''} ${p['Variante'] || ''}`.trim();
-  return base || '(Sin nombre)';
+  const base = `${p['Producto'] || ''} ${p['Item'] || ''}`.trim();
+  return base || p['NombreWeb'] || '(Sin nombre)';
 }
 
 function construirTextoProducto(p) {
-  const lineas = [`*${nombreMostrar(p)}*`, `Código: ${p['SKU'] || ''}`];
-  if (p['Marca'] && p['Marca'] !== 'null' && p['Marca'] !== '') lineas.push(`Marca: ${p['Marca']}`);
-  if (p['Variante'] && p['Variante'] !== 'null' && p['Variante'] !== '') lineas.push(`Variante/Modelo: ${p['Variante']}`);
+  const lineas = [`*${nombreMostrar(p)}*`, `Código: ${p['Codigo'] || ''}`];
+  const camposFijos = ['Marca', 'Modelo', 'Ranuras Polea', 'Voltaje', 'Refrigerante', 'Ancho', 'Alto', 'Grosor'];
+  camposFijos.forEach(campo => {
+    if (p[campo] && p[campo] !== 'null') lineas.push(`${campo}: ${p[campo]}`);
+  });
   return lineas.join('\n');
 }
 
@@ -320,35 +162,28 @@ async function loadProducts() {
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const rows = json.table.rows;
+    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Costo','Stock','Categoria','NombreWeb','Ancho','Alto','Grosor','SpecsExtra'];
     
-    // ORDEN EXACTO DE LAS 8 COLUMNAS DE BSALE EN GOOGLE SHEETS
-    // [0: Tipo de Producto, 1: Producto, 2: Variante, 3: Código de barras, 4: SKU, 5: Stock, 6: Marca, 7: Costo]
     allProducts = rows.map(row => {
-      return {
-        'Tipo de Producto': row.c[0] ? (String(row.c[0].v) || 'OTROS') : 'OTROS',
-        'Producto': row.c[1] ? (String(row.c[1].v) || '') : '',
-        'Variante': row.c[2] ? (String(row.c[2].v) || '') : '',
-        'Código de barras': row.c[3] ? (String(row.c[3].v) || '') : '',
-        'SKU': row.c[4] ? (String(row.c[4].v) || '') : '',
-        'Stock': row.c[5] && row.c[5].v !== undefined && !isNaN(row.c[5].v) ? Number(row.c[5].v) : 0,
-        'Marca': row.c[6] ? (String(row.c[6].v) || '') : '',
-        'Costo': row.c[7] && row.c[7].v !== undefined && !isNaN(row.c[7].v) ? Number(row.c[7].v) : 0
-      };
-    }).filter(p => p['SKU']);
+      const obj = {};
+      colNames.forEach((col, i) => {
+        obj[col] = row.c[i] ? (String(row.c[i].v) || '') : '';
+      });
+      return obj;
+    }).filter(p => p['Codigo']);
     
     renderTiles();
   } catch(e) {
-    document.getElementById('catTiles').innerHTML = '<div class="empty">Error cargando productos. Verifica la conexión.</div>';
+    document.getElementById('catTiles').innerHTML = '<div class="empty">Error cargando productos.</div>';
   }
 }
 
 function renderTiles() {
   const conteo = {};
   allProducts.forEach(p => {
-    let cat = (p['Tipo de Producto'] || 'OTROS').trim().toUpperCase();
+    const cat = p['Categoria'] || 'Otros';
     conteo[cat] = (conteo[cat] || 0) + 1;
   });
-  
   const categoriasConProductos = Object.keys(conteo);
   const prioritarias = ORDEN_PRIORIDAD.filter(c => categoriasConProductos.includes(c));
   const resto = categoriasConProductos.filter(c => !ORDEN_PRIORIDAD.includes(c)).sort();
@@ -370,7 +205,7 @@ function openCategory(cat) {
   document.getElementById('homeView').classList.add('hidden');
   document.getElementById('listView').classList.remove('hidden');
   document.getElementById('listTitle').textContent = cat;
-  renderList(allProducts.filter(p => (p['Tipo de Producto'] || 'OTROS').trim().toUpperCase() === cat));
+  renderList(allProducts.filter(p => (p['Categoria'] || 'Otros') === cat));
 }
 
 let searchTimer = null;
@@ -431,14 +266,17 @@ function renderList(products, targetId) {
     return;
   }
   list.innerHTML = products.map((p) => {
-    const thumb = `<div class="product-thumb-placeholder">📦</div>`;
-    const stockVal = Number(p['Stock']) || 0;
-    const stock = `<p class="product-stock" style="color: ${stockVal > 0 ? 'var(--ok)' : 'var(--bad)'};">Stock: ${stockVal}</p>`;
+    const foto = p['Foto1'] || '';
+    const thumb = foto
+      ? `<img class="product-thumb" src="${foto}" onerror="this.style.display='none'" />`
+      : `<div class="product-thumb-placeholder">📦</div>`;
+    const stock = p['Stock'] && p['Stock'] !== '0' && p['Stock'] !== 'null'
+      ? `<p class="product-stock">Stock: ${p['Stock']}</p>` : '';
     return `<div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
       ${thumb}
       <div class="product-info">
-        <p class="product-code">${p['SKU'] || ''}</p>
-        <p class="product-name">${nombreMostrar(p)}</p>
+        <p class="product-code">${p['Codigo'] || ''}</p>
+        <p class="product-name">${nombreMostrar(p)} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
         ${stock}
       </div>
       <span class="arrow">›</span>
@@ -453,24 +291,20 @@ function showDetail(idx) {
   document.getElementById('homeView').classList.add('hidden');
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('detailView').classList.add('active');
-  document.getElementById('detailTitle').textContent = currentProduct['SKU'] || '';
+  document.getElementById('detailTitle').textContent = currentProduct['Codigo'] || '';
   document.getElementById('dNombre').textContent = nombreMostrar(currentProduct);
-  document.getElementById('dCodigo').textContent = currentProduct['SKU'] || '';
+  document.getElementById('dCodigo').textContent = currentProduct['Codigo'] || '';
 
-  let specsHtml = '';
-  if (currentProduct['Marca'] && currentProduct['Marca'] !== 'null' && currentProduct['Marca'] !== '') {
-    specsHtml += `<div class="spec-row"><span class="spec-label">Marca</span><span class="spec-val">${currentProduct['Marca']}</span></div>`;
-  }
-  if (currentProduct['Variante'] && currentProduct['Variante'] !== 'null' && currentProduct['Variante'] !== '') {
-    specsHtml += `<div class="spec-row"><span class="spec-label">Variante / Modelo</span><span class="spec-val">${currentProduct['Variante']}</span></div>`;
-  }
-  if (currentProduct['Código de barras'] && currentProduct['Código de barras'] !== 'null' && currentProduct['Código de barras'] !== '') {
-    specsHtml += `<div class="spec-row"><span class="spec-label">Código de Barras</span><span class="spec-val">${currentProduct['Código de barras']}</span></div>`;
-  }
-  if (currentProduct['Costo'] !== undefined && currentProduct['Costo'] !== 0) {
+  const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Ancho','Alto','Grosor'];
+  let specsHtml = specs
+    .filter(k => currentProduct[k] && currentProduct[k] !== 'null')
+    .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
+    .join('');
+
+  if (currentProduct['Costo'] && currentProduct['Costo'] !== '0' && currentProduct['Costo'] !== 'null') {
     specsHtml += `<div class="spec-row"><span class="spec-label">Costo</span><span class="spec-val" style="color:#16324A;">$${Number(currentProduct['Costo']).toLocaleString('es-CL')}</span></div>`;
   }
-  if (currentProduct['Stock'] !== undefined) {
+  if (currentProduct['Stock'] !== undefined && currentProduct['Stock'] !== '' && currentProduct['Stock'] !== 'null') {
     const stock = Number(currentProduct['Stock']);
     const stockColor = stock > 0 ? '#3E7A4D' : '#B94A3D';
     const stockText = stock > 0 ? `${stock} disponibles` : 'Sin stock';
@@ -479,8 +313,11 @@ function showDetail(idx) {
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
   // FOTOS CON RESPALDO AUTOMÁTICO PARA CMP-2000
-  let fotos = [];
-  if (currentProduct['SKU'] === 'CMP-2000') {
+  let fotos = ['Foto1','Foto2','Foto3','Foto4']
+    .map(k => currentProduct[k])
+    .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
+
+  if (currentProduct['Codigo'] === 'CMP-2000' && fotos.length <= 1) {
     fotos = [
       'https://www.colderman.cl/wp-content/uploads/2023/11/3-1-300x300.png',
       'https://www.colderman.cl/wp-content/uploads/2023/11/1-1-300x300.png',
