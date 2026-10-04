@@ -296,7 +296,7 @@ let currentProduct = null;
 let selectedPhotos = [];
 let activeCat = '';
 let previousView = 'list';
-let savedScrollY = 0;
+let savedScrollY = '';
 
 function normalizar(texto) {
   return (texto || "").toLowerCase().replace(/[-\s]/g, '');
@@ -330,9 +330,9 @@ async function loadProducts() {
         'Variante': row.c[2] ? (String(row.c[2].v) || '') : '',
         'Código de barras': row.c[3] ? (String(row.c[3].v) || '') : '',
         'SKU': row.c[4] ? (String(row.c[4].v) || '') : '',
-        'Stock': row.c[5] && !isNaN(row.c[5].v) ? Number(row.c[5].v) : 0,
+        'Stock': row.c[5] && row.c[5].v !== undefined && !isNaN(row.c[5].v) ? Number(row.c[5].v) : 0,
         'Marca': row.c[6] ? (String(row.c[6].v) || '') : '',
-        'Costo': row.c[7] && !isNaN(row.c[7].v) ? Number(row.c[7].v) : 0
+        'Costo': row.c[7] && row.c[7].v !== undefined && !isNaN(row.c[7].v) ? Number(row.c[7].v) : 0
       };
     }).filter(p => p['SKU']);
     
