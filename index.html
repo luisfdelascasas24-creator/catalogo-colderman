@@ -14,9 +14,18 @@
         </header>
 
         <!-- Buscador -->
-        <div class="mb-6">
-            <input type="text" id="buscador" placeholder="Busca por código o nombre (ej: HILUX, CMP-0151)..." 
-                class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 text-lg shadow-inner">
+        <div class="mb-4">
+            <input type="text" id="buscador" placeholder="Busca por código, nombre o marca..." 
+                class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 shadow-inner">
+        </div>
+
+        <!-- Filtros por Categoría -->
+        <div id="categorias-container" class="flex gap-2 overflow-x-auto pb-4 mb-4">
+            <button onclick="filtrarCategoria('Todos')" class="cat-btn px-4 py-2 rounded-lg bg-cyan-600 text-white text-sm font-semibold whitespace-nowrap">Todos</button>
+            <button onclick="filtrarCategoria('Compresores')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700">Compresores</button>
+            <button onclick="filtrarCategoria('Condensadores')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700">Condensadores</button>
+            <button onclick="filtrarCategoria('Sopladores')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700">Sopladores</button>
+            <button onclick="filtrarCategoria('Filtros')" class="cat-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm font-semibold whitespace-nowrap hover:bg-slate-700">Filtros</button>
         </div>
 
         <!-- Contenedor de Resultados -->
@@ -27,6 +36,7 @@
 
     <script>
         let productos = [];
+        let categoriaActual = 'Todos';
 
         async function cargarDatos() {
             try {
@@ -47,30 +57,38 @@
 
             contenedor.innerHTML = lista.map(p => `
                 <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col md:flex-row gap-4 items-center shadow-lg">
-                    <img src="${p.fotos[0] || 'https://via.placeholder.com/150'}" alt="${p.nombre}" class="w-28 h-28 object-contain bg-white rounded-lg p-1">
+                    <img src="${p.fotos[0] || 'https://via.placeholder.com/150'}" alt="${p.nombre}" class="w-24 h-24 object-contain bg-white rounded-lg p-1">
                     <div class="flex-1 w-full text-left">
                         <div class="flex justify-between items-start">
                             <span class="text-xs font-semibold bg-cyan-900 text-cyan-300 px-2 py-1 rounded">${p.codigo}</span>
                             <span class="text-sm font-bold ${p.stock > 0 ? 'text-emerald-400' : 'text-rose-400'}">Stock: ${p.stock}</span>
                         </div>
                         <h2 class="text-lg font-bold text-white mt-1">${p.nombre}</h2>
-                        <p class="text-sm text-slate-400">Modelo: ${p.modelo || 'N/A'} | Voltaje: ${p.voltaje || 'N/A'}</p>
+                        <p class="text-xs text-slate-400">Cat: ${p.categoria || 'General'} | Modelo: ${p.modelo || 'N/A'} | Voltaje: ${p.voltaje || 'N/A'}</p>
                         <p class="text-cyan-400 font-semibold mt-2">Costo: $${p.costo.toLocaleString('es-CL')}</p>
                     </div>
                 </div>
             `).join('');
         }
 
-        document.getElementById('buscador').addEventListener('input', (e) => {
-            const texto = e.target.value.toLowerCase();
-            const filtrados = productos.filter(p => 
-                p.codigo.toLowerCase().includes(texto) || 
-                p.nombre.toLowerCase().includes(texto) ||
-                (p.modelo && p.modelo.toLowerCase().includes(texto))
-            );
-            mostrarProductos(filtrados);
-        });
+        function filtrarCategoria(cat) {
+            categoriaActual = cat;
+            aplicarFiltros();
+        }
 
+        function aplicarFiltros() {
+            const texto = document.getElementById('buscador').value.toLowerCase();
+            const filtrados = productos.filter(p => {
+                const coincideCat = (categoriaActual === 'Todos' || p.categoria === categoriaActual);
+                const coincideTexto = p.codigo.toLowerCase().includes(texto) || 
+                                      p.nombre.toLowerCase().includes(texto) ||
+                                      (p.marca && p.marca.toLowerCase().includes(texto));
+                return coincideCat && coincideTexto;
+            });
+            mostrarProductos(filtrados);
+        }
+
+        document.getElementById('buscador').addEventListener('input', aplicarFiltros);
         cargarDatos();
     </script>
 </body>
