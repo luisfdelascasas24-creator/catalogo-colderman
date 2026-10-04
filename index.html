@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -251,7 +251,7 @@ function clearHomeSearch() {
 function goHome() {
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('homeView').classList.remove('hidden');
-  document.getElementById('homeSearchInput').value = '';
+  document.getElementById('homeSearchInput'].value = '';
   searchFromHome();
 }
 
@@ -312,16 +312,16 @@ function showDetail(idx) {
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  // LAS 3 FOTOS EXACTAS Y COINCIDENTES CON LA WEB DE WORDPRESS PARA EL CMP-2000
+  // ORDEN EXACTO Y VERIFICADO DE LAS 3 FOTOS OFICIALES DEL CMP-2000 SEGÚN TU WEB
   let fotos = ['Foto1','Foto2','Foto3','Foto4']
     .map(k => currentProduct[k])
     .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
 
   if (currentProduct['Codigo'] === 'CMP-2000') {
     fotos = [
-      'https://www.colderman.cl/wp-content/uploads/2023/11/1-1-300x300.png',
+      'https://www.colderman.cl/wp-content/uploads/2023/11/3-1-300x300.png',
       'https://www.colderman.cl/wp-content/uploads/2023/11/2-1-300x300.png',
-      'https://www.colderman.cl/wp-content/uploads/2023/11/3-1-300x300.png'
+      'https://www.colderman.cl/wp-content/uploads/2023/11/1-1-300x300.png'
     ];
   }
 
