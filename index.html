@@ -279,15 +279,18 @@ body {
 </div>
 
 <script>
-const URL = 'https://script.google.com/macros/s/AKfycbyYUIYKKbrziqch6O72-sHGRXHvZyDIFMb3N3jacHEJh2Mzj6RWsoMZqXqJy_HZ6exr/exec';
+const SHEET_ID = '1pXIUcd2WNbr29ZWkxOdISj--yTB64vPAxQyfVjOLoQ0';
+const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
 
-const ORDEN_PRIORIDAD = ['COMPRESORES', 'EVAPORADORES', 'CONDENSADORES', 'HERRAMIENTAS', 'FILTROS', 'BLOWER'];
+const ORDEN_PRIORIDAD = ['Compresores', 'Evaporadores', 'Condensadores', 'Herramientas', 'Filtros', 'Blowers'];
 const ICONOS_CATEGORIA = {
-  'COMPRESORES': '⚙️', 'EVAPORADORES': '❄️', 'CONDENSADORES': '🌬️',
-  'HERRAMIENTAS': '🛠️', 'FILTROS': '🧰', 'BLOWERS': '🌀', 'BLOWER': '🌀',
-  'BOBINAS': '🧲', 'VALVULAS': '🔩', 'FITTING': '🔗', 'FITTINGS': '🔗',
-  'ACEITES': '🛢️', 'PRESOSTATOS': '🎚️', 'ELECTROVENTILADORES': '🌪️',
-  'EQUIPO ELECTRICO': '🔌', 'MANGUERAS': '🔗', 'SWITCH': '📟', 'OTROS': '📦'
+  'Compresores': '⚙️', 'Evaporadores': '❄️', 'Condensadores': '🌬️',
+  'Herramientas': '🛠️', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
+  'Válvulas': '🔩', 'Mangueras / Fittings': '🔗', 'Fittings': '🔗',
+  'Gases / Aceites': '🧴', 'Gases': '🧪', 'Aceites': '🛢️',
+  'Switch / Sensores': '📟', 'Electroventiladores': '🌪️',
+  'Equipos Eléctricos': '🔌', 'Presostatos': '🎚️', 'Termostatos': '🌡️',
+  'Ferrules': '🔗', 'Poleas': '⭕', 'Tapas': '🔘', 'Otros': '📦'
 };
 
 let allProducts = [];
@@ -303,49 +306,46 @@ function normalizar(texto) {
 
 function nombreMostrar(p) {
   const base = `${p['Producto'] || ''} ${p['Variante'] || ''}`.trim();
-  return base || '(Sin nombre)';
+  return base || p['NombreWeb'] || '(Sin nombre)';
 }
 
 function construirTextoProducto(p) {
   const lineas = [`*${nombreMostrar(p)}*`, `Código: ${p['Codigo'] || ''}`];
-  if (p['Marca'] && p['Marca'] !== 'null') lineas.push(`Marca: ${p['Marca']}`);
-  if (p['Variante'] && p['Variante'] !== 'null') lineas.push(`Modelo: ${p['Variante']}`);
+  const camposFijos = ['Marca', 'Modelo', 'Ranuras Polea', 'Voltaje', 'Refrigerante', 'Ancho', 'Alto', 'Grosor'];
+  camposFijos.forEach(campo => {
+    if (p[campo] && p[campo] !== 'null') lineas.push(`${campo}: ${p[campo]}`);
+  });
   return lineas.join('\n');
 }
 
 async function loadProducts() {
   try {
     const res = await fetch(URL);
-    const data = await res.json();
-    const rows = data.table.rows;
+    const text = await res.text();
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const rows = json.table.rows;
+    const colNames = ['Tipo de Producto','Producto','Variante','Código de barras','SKU','Stock','Marca','Costo','Foto1','Foto2','Foto3','Foto4','Categoria','NombreWeb','Ancho','Alto','Grosor','SpecsExtra'];
+    
     allProducts = rows.map(row => {
-      return {
-        'Codigo': row.c[0] ? row.c[0].v : '',
-        'Producto': row.c[1] ? row.c[1].v : '',
-        'Variante': row.c[2] ? row.c[2].v : '',
-        'Código de barras': row.c[3] ? row.c[3].v : '',
-        'SKU': row.c[4] ? row.c[4].v : '',
-        'Stock': row.c[5] ? row.c[5].v : 0,
-        'Marca': row.c[6] ? row.c[6].v : '',
-        'Costo': row.c[7] ? row.c[7].v : 0,
-        'Categoria': row.c[8] ? row.c[8].v : 'OTROS',
-        'Foto1': row.c[9] ? row.c[9].v : '',
-        'Foto2': row.c[10] ? row.c[10].v : '',
-        'Foto3': row.c[11] ? row.c[11].v : '',
-        'Foto4': row.c[12] ? row.c[12].v : ''
-      };
+      const obj = {};
+      colNames.forEach((col, i) => {
+        obj[col] = row.c[i] ? (String(row.c[i].v) || '') : '';
+      });
+      obj['Codigo'] = obj['SKU'] || obj['Código de barras'] || '';
+      obj['Categoria'] = obj['Tipo de Producto'] || 'Otros';
+      return obj;
     }).filter(p => p['Codigo']);
+    
     renderTiles();
   } catch(e) {
-    document.getElementById('catTiles').innerHTML = '<div class="empty">Error cargando productos.</div>';
+    document.getElementById('catTiles').innerHTML = '<div class="empty">Error cargando productos. Verifica la conexión.</div>';
   }
 }
 
 function renderTiles() {
   const conteo = {};
   allProducts.forEach(p => {
-    let cat = (p['Categoria'] || 'OTROS').trim();
-    // Normalizar capitalización para mantener orden estético
+    let cat = p['Categoria'] || 'Otros';
     cat = cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
     conteo[cat] = (conteo[cat] || 0) + 1;
   });
@@ -358,7 +358,7 @@ function renderTiles() {
   const wrap = document.getElementById('catTiles');
   wrap.innerHTML = ordenFinal.map(cat => `
     <div class="cat-tile" onclick="openCategory('${cat.replace(/'/g, "\\'")}')">
-      <span class="cat-tile-icon">${ICONOS_CATEGORIA[cat.toUpperCase()] || '📦'}</span>
+      <span class="cat-tile-icon">${ICONOS_CATEGORIA[cat] || '📦'}</span>
       <span class="cat-tile-name">${cat}</span>
       <span class="cat-tile-count">${conteo[cat]} productos</span>
     </div>
@@ -372,7 +372,7 @@ function openCategory(cat) {
   document.getElementById('listView').classList.remove('hidden');
   document.getElementById('listTitle').textContent = cat;
   renderList(allProducts.filter(p => {
-    let c = (p['Categoria'] || 'OTROS').trim();
+    let c = p['Categoria'] || 'Otros';
     c = c.charAt(0).toUpperCase() + c.slice(1).toLowerCase();
     return c === cat;
   }));
@@ -465,13 +465,20 @@ function showDetail(idx) {
   document.getElementById('dNombre').textContent = nombreMostrar(currentProduct);
   document.getElementById('dCodigo').textContent = currentProduct['Codigo'] || '';
 
-  let specsHtml = '';
-  if (currentProduct['Marca']) specsHtml += `<div class="spec-row"><span class="spec-label">Marca</span><span class="spec-val">${currentProduct['Marca']}</span></div>`;
-  if (currentProduct['Variante']) specsHtml += `<div class="spec-row"><span class="spec-label">Modelo</span><span class="spec-val">${currentProduct['Variante']}</span></div>`;
-  if (currentProduct['Costo']) specsHtml += `<div class="spec-row"><span class="spec-label">Costo</span><span class="spec-val" style="color:#16324A;">$${Number(currentProduct['Costo']).toLocaleString('es-CL')}</span></div>`;
-  if (currentProduct['Stock'] !== undefined) {
+  const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Ancho','Alto','Grosor'];
+  let specsHtml = specs
+    .filter(k => currentProduct[k] && currentProduct[k] !== 'null')
+    .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
+    .join('');
+
+  if (currentProduct['Costo'] && currentProduct['Costo'] !== '0' && currentProduct['Costo'] !== 'null') {
+    specsHtml += `<div class="spec-row"><span class="spec-label">Costo</span><span class="spec-val" style="color:#16324A;">$${Number(currentProduct['Costo']).toLocaleString('es-CL')}</span></div>`;
+  }
+  if (currentProduct['Stock'] !== undefined && currentProduct['Stock'] !== '' && currentProduct['Stock'] !== 'null') {
     const stock = Number(currentProduct['Stock']);
-    specsHtml += `<div class="spec-row"><span class="spec-label">Stock</span><span class="spec-val" style="color:${stock > 0 ? '#3E7A4D' : '#B94A3D'};">${stock} disponibles</span></div>`;
+    const stockColor = stock > 0 ? '#3E7A4D' : '#B94A3D';
+    const stockText = stock > 0 ? `${stock} disponibles` : 'Sin stock';
+    specsHtml += `<div class="spec-row"><span class="spec-label">Stock</span><span class="spec-val" style="color:${stockColor};">${stockText}</span></div>`;
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
