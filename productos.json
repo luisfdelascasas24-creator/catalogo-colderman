@@ -2,6 +2,7 @@
   {
     "codigo": "BLO-0011",
     "nombre": "BLOWER SOPLADOR TOYOTA HILUX REVO",
+    "categoria": "Sopladores",
     "marca": "TOYOTA",
     "modelo": "HILUX REVO",
     "voltaje": "12V",
@@ -9,13 +10,13 @@
     "stock": 1,
     "fotos": [
       "https://www.colderman.cl/wp-content/uploads/2024/04/2-26-e1782401693306-300x300.png",
-      "https://www.colderman.cl/wp-content/uploads/2024/04/3-21-300x300.png",
-      "https://www.colderman.cl/wp-content/uploads/2024/04/1-26-300x300.png"
+      "https://www.colderman.cl/wp-content/uploads/2024/04/3-21-300x300.png"
     ]
   },
   {
     "codigo": "CMP-0151",
     "nombre": "Compresor Camión Mercedes Actros 10PA15",
+    "categoria": "Compresores",
     "marca": "Mercedes",
     "modelo": "Actros",
     "voltaje": "24V",
@@ -24,6 +25,32 @@
     "fotos": [
       "https://www.colderman.cl/wp-content/uploads/2022/12/12.-COMPRESOR-CAMION-MERCEDES-ACTROS-10PA15-11PK-24V-300x300.png",
       "https://www.colderman.cl/wp-content/uploads/2022/12/3-21-300x300.png"
+    ]
+  },
+  {
+    "codigo": "CND-22X22",
+    "nombre": "Condensador CND-22X22 Universal",
+    "categoria": "Condensadores",
+    "marca": "Universal",
+    "modelo": "22X22",
+    "voltaje": "N/A",
+    "costo": 341100,
+    "stock": 13,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2023/02/Condensador-22x22-Universal-300x300.png"
+    ]
+  },
+  {
+    "codigo": "FLT-0015",
+    "nombre": "Filtro Secador Maquinaria",
+    "categoria": "Filtros",
+    "marca": "Universal",
+    "modelo": "Maquinaria",
+    "voltaje": "N/A",
+    "costo": 43458,
+    "stock": 0,
+    "fotos": [
+      "https://www.colderman.cl/wp-content/uploads/2023/03/Filtro-secador-maquinaria-CASE-macho-macho.png"
     ]
   }
 ]
