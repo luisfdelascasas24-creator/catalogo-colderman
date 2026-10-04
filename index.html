@@ -78,28 +78,6 @@ body {
 }
 .search-wrap input:focus { border-color: var(--accent); }
 
-.cats-wrap {
-  display: flex;
-  gap: 7px;
-  padding: 2px 16px 14px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.cats-wrap::-webkit-scrollbar { display: none; }
-.cat {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 7px 15px;
-  border-radius: 100px;
-  white-space: nowrap;
-  cursor: pointer;
-  border: 1.5px solid var(--line);
-  background: var(--card);
-  color: var(--ink-soft);
-}
-.cat.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
 .count-badge {
   font-family: 'Inter', sans-serif;
   font-size: 12.5px;
@@ -153,18 +131,6 @@ body {
 }
 .home-view:not(.hidden), .list-view:not(.hidden), .detail-view.active {
   animation: viewEnter 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.product-card, .cat-tile {
-  transition: transform 0.12s ease, background-color 0.12s ease;
-}
-.product-card:active, .cat-tile:active {
-  transform: scale(0.97);
-}
-.btn-wsp, .btn-copy {
-  transition: transform 0.12s ease;
-}
-.btn-wsp:active:not(:disabled), .btn-copy:active {
-  transform: scale(0.98);
 }
 .hidden { display: none !important; }
 
@@ -318,8 +284,8 @@ const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:
 
 const ORDEN_PRIORIDAD = ['Compresores', 'Evaporadores', 'Condensadores', 'Herramientas', 'Filtros', 'Blowers'];
 const ICONOS_CATEGORIA = {
-  'Compresores': '⚙️', 'Evaporadores': '❄️️', 'Condensadores': '🌬️',
-  'Herramientas': '🛠', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
+  'Compresores': '⚙️', 'Evaporadores': '❄️', 'Condensadores': '🌬️',
+  'Herramientas': '🛠️', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
   'Válvulas': '🔩', 'Mangueras / Fittings': '🔗', 'Fittings': '🔗',
   'Gases / Aceites': '🧴', 'Gases': '🧪', 'Aceites': '🛢️',
   'Switch / Sensores': '📟', 'Electroventiladores': '🌪️',
@@ -524,29 +490,65 @@ function showDetail(idx) {
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  // CORRECCIÓN CLAVE: Recorre de forma limpia Foto1 hasta Foto4 filtrando celdas vacías o nulas
-  const fotos = ['Foto1','Foto2','Foto3','Foto4']
+  // RECOLECCIÓN ROBUSTA DE FOTOS DESDE EL GOOGLE SHEET
+  let fotos = ['Foto1','Foto2','Foto3','Foto4']
     .map(k => currentProduct[k])
     .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
 
   const grid = document.getElementById('photosGrid');
+  
   if (fotos.length === 0) {
     grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#B7BBC0;font-size:13px;">Sin fotos cargadas</div>';
+    updateWspBtn();
   } else {
-    grid.innerHTML = fotos.map((urlFoto, i) => `
-      <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${urlFoto}')">
-        <img src="${urlFoto}" onerror="this.parentElement.style.display='none'" />
-        <div class="photo-check">✓</div>
-      </div>`).join('');
+    renderGridFotos(fotos);
   }
+
+  // INTENTO INTELIGENTE ADICIONAL: Si el producto solo tiene 1 foto en la hoja de cálculo,
+  // consulta en segundo plano a la API de WooCommerce para buscar galerías adicionales si existieran en la web.
+  if (fotos.length <= 1 && currentProduct['Codigo']) {
+    buscarFotosWooCommerce(currentProduct['Codigo']);
+  }
+}
+
+function renderGridFotos(fotos) {
+  const grid = document.getElementById('photosGrid');
+  grid.innerHTML = fotos.map((urlFoto, i) => `
+    <div class="photo-item ${selectedPhotos.includes(urlFoto) ? 'selected' : ''}" id="photo-${i}" onclick="togglePhoto(${i}, '${urlFoto}')">
+      <img src="${urlFoto}" onerror="this.parentElement.style.display='none'" />
+      <div class="photo-check">✓</div>
+    </div>`).join('');
   updateWspBtn();
+}
+
+async function buscarFotosWooCommerce(codigo) {
+  try {
+    const consumerKey = 'ck_cb263b71000d4d2e26fc1fec8ddf776da281a969';
+    const consumerSecret = 'cs_f92ddd1f880e1bd3b2d6dc1d6d8251c7e00ceef';
+    const auth = btoa(`${consumerKey}:${consumerSecret}`);
+    
+    // Búsqueda del producto en la API de WooCommerce por SKU (Código)
+    const res = await fetch(`https://www.colderman.cl/wp-json/wc/v3/products?sku=${encodeURIComponent(codigo)}`, {
+      headers: { 'Authorization': `Basic ${auth}` }
+    });
+    const items = await res.json();
+    
+    if (items && items.length > 0 && items[0].images && items[0].images.length > 0) {
+      const urlsWoo = items[0].images.map(img => img.src);
+      if (urlsWoo.length > 1) {
+        renderGridFotos(urlsWoo);
+      }
+    }
+  } catch(err) {
+    // Si falla la red o CORS, se mantiene con las fotos que ya tiene cargadas del Google Sheet sin afectar la app.
+  }
 }
 
 function togglePhoto(idx, url) {
   const el = document.getElementById(`photo-${idx}`);
   const i = selectedPhotos.indexOf(url);
-  if (i === -1) { selectedPhotos.push(url); el.classList.add('selected'); }
-  else { selectedPhotos.splice(i, 1); el.classList.remove('selected'); }
+  if (i === -1) { selectedPhotos.push(url); if(el) el.classList.add('selected'); }
+  else { selectedPhotos.splice(i, 1); if(el) el.classList.remove('selected'); }
   updateWspBtn();
 }
 
