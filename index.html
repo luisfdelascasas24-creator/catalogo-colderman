@@ -490,58 +490,40 @@ function showDetail(idx) {
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  // RECOLECCIÓN ROBUSTA DE FOTOS DESDE EL GOOGLE SHEET
+  // RECOLECCIÓN INTELIGENTE Y AUTOGENERACIÓN DE FOTOS FALTANTES DESDE WORDPRESS
   let fotos = ['Foto1','Foto2','Foto3','Foto4']
     .map(k => currentProduct[k])
     .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
 
+  // Si el Excel solo tiene 1 foto pero sabemos que en la web hay más, 
+  // autogeneramos las variantes probables basadas en el patrón de WordPress de colderman.cl
+  if (fotos.length === 1 && fotos[0].includes('colderman.cl')) {
+    const urlBase = fotos[0];
+    // Patrón típico de WordPress: reemplazar el prefijo numérico inicial (ej: '3-1-' por '1-1-', '2-1-', etc.)
+    const match = urlBase.match(/\/(\d+)-(\d+)-([e\d]+)(-\d+x\d+)?\.([a-zA-Z]+)$/);
+    if (match) {
+      const numOriginal = match[1];
+      // Generamos opciones alternativas estándar de la web para completar la galería de forma automática
+      ['1', '2', '3', '4'].forEach(n => {
+        if (n !== numOriginal) {
+          const nuevaUrl = urlBase.replace(`/${numOriginal}-`, `/${n}-`);
+          if (!fotos.includes(nuevaUrl)) fotos.push(nuevaUrl);
+        }
+      });
+    }
+  }
+
   const grid = document.getElementById('photosGrid');
-  
   if (fotos.length === 0) {
     grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#B7BBC0;font-size:13px;">Sin fotos cargadas</div>';
-    updateWspBtn();
   } else {
-    renderGridFotos(fotos);
+    grid.innerHTML = fotos.map((urlFoto, i) => `
+      <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${urlFoto}')">
+        <img src="${urlFoto}" onerror="this.parentElement.style.display='none'" />
+        <div class="photo-check">✓</div>
+      </div>`).join('');
   }
-
-  // INTENTO INTELIGENTE ADICIONAL: Si el producto solo tiene 1 foto en la hoja de cálculo,
-  // consulta en segundo plano a la API de WooCommerce para buscar galerías adicionales si existieran en la web.
-  if (fotos.length <= 1 && currentProduct['Codigo']) {
-    buscarFotosWooCommerce(currentProduct['Codigo']);
-  }
-}
-
-function renderGridFotos(fotos) {
-  const grid = document.getElementById('photosGrid');
-  grid.innerHTML = fotos.map((urlFoto, i) => `
-    <div class="photo-item ${selectedPhotos.includes(urlFoto) ? 'selected' : ''}" id="photo-${i}" onclick="togglePhoto(${i}, '${urlFoto}')">
-      <img src="${urlFoto}" onerror="this.parentElement.style.display='none'" />
-      <div class="photo-check">✓</div>
-    </div>`).join('');
   updateWspBtn();
-}
-
-async function buscarFotosWooCommerce(codigo) {
-  try {
-    const consumerKey = 'ck_cb263b71000d4d2e26fc1fec8ddf776da281a969';
-    const consumerSecret = 'cs_f92ddd1f880e1bd3b2d6dc1d6d8251c7e00ceef';
-    const auth = btoa(`${consumerKey}:${consumerSecret}`);
-    
-    // Búsqueda del producto en la API de WooCommerce por SKU (Código)
-    const res = await fetch(`https://www.colderman.cl/wp-json/wc/v3/products?sku=${encodeURIComponent(codigo)}`, {
-      headers: { 'Authorization': `Basic ${auth}` }
-    });
-    const items = await res.json();
-    
-    if (items && items.length > 0 && items[0].images && items[0].images.length > 0) {
-      const urlsWoo = items[0].images.map(img => img.src);
-      if (urlsWoo.length > 1) {
-        renderGridFotos(urlsWoo);
-      }
-    }
-  } catch(err) {
-    // Si falla la red o CORS, se mantiene con las fotos que ya tiene cargadas del Google Sheet sin afectar la app.
-  }
 }
 
 function togglePhoto(idx, url) {
