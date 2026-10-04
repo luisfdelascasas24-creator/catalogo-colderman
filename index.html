@@ -318,8 +318,8 @@ const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:
 
 const ORDEN_PRIORIDAD = ['Compresores', 'Evaporadores', 'Condensadores', 'Herramientas', 'Filtros', 'Blowers'];
 const ICONOS_CATEGORIA = {
-  'Compresores': '⚙️', 'Evaporadores': '❄️', 'Condensadores': '🌬️',
-  'Herramientas': '🛠️️', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
+  'Compresores': '⚙️', 'Evaporadores': '❄️️', 'Condensadores': '🌬️',
+  'Herramientas': '🛠', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
   'Válvulas': '🔩', 'Mangueras / Fittings': '🔗', 'Fittings': '🔗',
   'Gases / Aceites': '🧴', 'Gases': '🧪', 'Aceites': '🛢️',
   'Switch / Sensores': '📟', 'Electroventiladores': '🌪️',
@@ -334,7 +334,6 @@ let activeCat = '';
 let previousView = 'list';
 let savedScrollY = 0;
 
-// Función de normalización mejorada para que la búsqueda sea 100% tolerante a guiones y espacios
 function normalizar(texto) {
   return (texto || "").toLowerCase().replace(/[-\s]/g, '');
 }
@@ -525,14 +524,18 @@ function showDetail(idx) {
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  const fotos = ['Foto1','Foto2','Foto3','Foto4'].filter(k => currentProduct[k] && currentProduct[k] !== 'null' && currentProduct[k] !== '');
+  // CORRECCIÓN CLAVE: Recorre de forma limpia Foto1 hasta Foto4 filtrando celdas vacías o nulas
+  const fotos = ['Foto1','Foto2','Foto3','Foto4']
+    .map(k => currentProduct[k])
+    .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
+
   const grid = document.getElementById('photosGrid');
   if (fotos.length === 0) {
     grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#B7BBC0;font-size:13px;">Sin fotos cargadas</div>';
   } else {
-    grid.innerHTML = fotos.map((k, i) => `
-      <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${currentProduct[k]}')">
-        <img src="${currentProduct[k]}" onerror="this.parentElement.style.display='none'" />
+    grid.innerHTML = fotos.map((urlFoto, i) => `
+      <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${urlFoto}')">
+        <img src="${urlFoto}" onerror="this.parentElement.style.display='none'" />
         <div class="photo-check">✓</div>
       </div>`).join('');
   }
