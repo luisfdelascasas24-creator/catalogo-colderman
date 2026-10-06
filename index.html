@@ -4,98 +4,82 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Catálogo Colderman</title>
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" href="icon-192.png">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FF6A1A">
+<link rel="apple-touch-icon" href="https://luisfdelascasas24-creator.github.io/catalogo-colderman/LOGO%20SIN%20FONDO%20COLDERMAN.png">
+<link rel="icon" type="image/png" href="https://luisfdelascasas24-creator.github.io/catalogo-colderman/LOGO%20SIN%20FONDO%20COLDERMAN.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Colderman">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink: #16181D;
-  --ink-soft: #767C87;
-  --bg: #FAFAFA;
-  --accent: #FF6A1A;
-  --accent-deep: #E85700;
-  --line: #ECECEC;
-  --ok: #1B8A5A;
-  --bad: #D8483A;
-  --card: #FFFFFF;
-}
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
-.app { max-width: 480px; margin: 0 auto; background: var(--bg); min-height: 100vh; }
-.topbar { background: var(--card); padding: 18px; display: flex; align-items: baseline; gap: 10px; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
-.topbar-title { color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 20px; }
-.back-btn { color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; background: none; border: none; }
-.search-wrap { padding: 14px 16px 10px; }
-.search-wrap input { width: 100%; font-size: 14px; padding: 12px 16px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); outline: none; }
-.count-badge { font-size: 12.5px; color: var(--ink-soft); padding: 2px 16px 10px; }
-.product-list { padding: 0 12px 20px; display: flex; flex-direction: column; gap: 10px; }
-.product-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: flex; gap: 12px; align-items: center; cursor: pointer; }
-.product-thumb { width: 60px; height: 60px; border-radius: 12px; background: var(--bg); object-fit: cover; flex-shrink: 0; }
-.product-thumb-placeholder { width: 60px; height: 60px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; color: #C7CBD1; font-size: 22px; flex-shrink: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; min-height: 100vh; }
+.app { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; }
+.topbar { background: #185FA5; padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+.topbar-title { color: #E6F1FB; font-size: 16px; font-weight: 600; }
+.back-btn { color: #B5D4F4; font-size: 14px; cursor: pointer; background: none; border: none; padding: 0; }
+.search-wrap { padding: 10px 12px; background: #f0f2f5; border-bottom: 1px solid #e0e0e0; }
+.search-wrap input { width: 100%; font-size: 14px; padding: 9px 14px; border-radius: 8px; border: 1px solid #d0d0d0; background: white; color: #333; outline: none; }
+.search-wrap input:focus { border-color: #185FA5; }
+.cats-wrap { display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; border-bottom: 1px solid #e0e0e0; scrollbar-width: none; }
+.cats-wrap::-webkit-scrollbar { display: none; }
+.cat { font-size: 12px; padding: 5px 12px; border-radius: 20px; white-space: nowrap; font-weight: 500; cursor: pointer; border: 1px solid #d0d0d0; background: white; color: #555; }
+.cat.active { background: #185FA5; color: white; border-color: #185FA5; }
+.product-list { padding: 8px 12px; display: flex; flex-direction: column; gap: 8px; }
+.count-badge { font-size: 12px; color: #888; padding: 6px 12px; }
+.product-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; cursor: pointer; }
+.product-card:active { background: #f5f5f5; }
+.product-thumb { width: 56px; height: 56px; border-radius: 8px; background: #f0f2f5; object-fit: cover; flex-shrink: 0; }
+.product-thumb-placeholder { width: 56px; height: 56px; border-radius: 8px; background: #f0f2f5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #bbb; font-size: 22px; }
 .product-info { flex: 1; min-width: 0; }
-.product-code { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 800; color: var(--ink); }
-.product-name { font-size: 13px; color: var(--ink-soft); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.product-stock { font-size: 11.5px; font-weight: 600; color: var(--ok); margin-top: 4px; }
-.arrow { color: #C7CBD1; font-size: 18px; }
+.product-name { font-size: 14px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.product-code { font-size: 12px; color: #888; margin-top: 3px; }
+.product-stock { font-size: 11px; color: #25a244; margin-top: 2px; }
+.arrow { color: #bbb; font-size: 18px; }
 .detail-view { display: none; }
 .detail-view.active { display: block; }
-.hidden { display: none !important; }
-.cat-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 6px 16px 20px; }
-.cat-tile { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 14px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
-.cat-tile-icon { font-size: 26px; margin-bottom: 4px; }
-.cat-tile-name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15.5px; color: var(--ink); }
-.cat-tile-count { font-size: 12px; color: var(--ink-soft); }
-.photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 14px; background: #F1F1EF; }
-.photo-item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; background: #fff; }
-.photo-item.selected { border-color: var(--accent); }
+.list-view.hidden { display: none; }
+.photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px; background: #f0f2f5; }
+.photo-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s; }
+.photo-item.selected { border-color: #185FA5; }
 .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photo-check { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 100px; background: var(--accent); display: none; align-items: center; justify-content: center; color: white; font-size: 12px; }
+.photo-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; background: #185FA5; display: none; align-items: center; justify-content: center; color: white; font-size: 12px; }
 .photo-item.selected .photo-check { display: flex; }
-.detail-body { padding: 18px; }
-.detail-code-tag { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 4px; }
-.detail-name { font-size: 15px; color: var(--ink-soft); }
-.specs-title { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); margin: 20px 0 4px; padding-top: 14px; border-top: 1px solid var(--line); }
-.spec-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-.spec-label { color: var(--ink-soft); }
-.spec-val { color: var(--ink); font-weight: 600; }
-.actions { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
-.btn-copy { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-wsp { width: 100%; padding: 15px; border-radius: 12px; border: none; background: #25D366; color: white; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-.btn-wsp:disabled { background: #D8DAD6; }
-.select-hint { font-size: 12px; color: var(--ink-soft); text-align: center; }
-.copied-msg { font-size: 13px; color: var(--ok); text-align: center; font-weight: 600; display: none; }
-.empty, .loading { padding: 3rem; text-align: center; color: var(--ink-soft); }
+.detail-body { padding: 14px; }
+.detail-name { font-size: 17px; font-weight: 600; color: #222; }
+.detail-code { font-size: 13px; color: #888; margin-top: 3px; margin-bottom: 16px; }
+.specs-title { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+.spec-label { color: #888; }
+.spec-val { color: #222; font-weight: 500; }
+.actions { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.btn-copy { width: 100%; padding: 11px; border-radius: 10px; border: 1.5px solid #185FA5; background: #E6F1FB; color: #0C447C; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-copy:active { background: #B5D4F4; }
+.btn-wsp { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #25D366; color: white; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-wsp:disabled { background: #b0b0b0; }
+.btn-wsp:active { background: #1da851; }
+.select-hint { font-size: 12px; color: #888; text-align: center; }
+.copied-msg { font-size: 13px; color: #25D366; text-align: center; font-weight: 500; display: none; }
+.empty { padding: 3rem; text-align: center; color: #888; font-size: 14px; }
+.loading { padding: 3rem; text-align: center; color: #888; font-size: 14px; }
 </style>
 </head>
 <body>
+
 <div class="app">
-  <div class="home-view" id="homeView">
+  <div class="list-view" id="listView">
     <div class="topbar">
-      <button class="back-btn hidden" id="homeBackBtn" onclick="clearHomeSearch()">‹ Volver</button>
-      <span class="topbar-title">Catálogo Colderman</span>
+      <span class="topbar-title">📦 Catálogo Colderman</span>
     </div>
     <div class="search-wrap">
-      <input type="text" id="homeSearchInput" placeholder="Buscar por código, producto o marca..." oninput="debounceSearch()" />
+      <input type="text" id="searchInput" placeholder="Buscar por código, producto o marca..." oninput="filterProducts()" />
     </div>
-    <div id="catTiles" class="cat-tiles"><div class="loading">Cargando catálogo...</div></div>
-    <div id="homeCount" class="count-badge hidden"></div>
-    <div id="homeResults" class="product-list hidden"></div>
-  </div>
-  <div class="list-view hidden" id="listView">
-    <div class="topbar">
-      <button class="back-btn" onclick="goHome()">‹ Volver</button>
-      <span class="topbar-title" id="listTitle">Resultados</span>
+    <div class="cats-wrap" id="catsWrap">
+      <button class="cat active" onclick="filterCat(this, '')">Todos</button>
     </div>
     <div id="productCount" class="count-badge"></div>
-    <div id="productList" class="product-list"></div>
+    <div id="productList" class="product-list">
+      <div class="loading">Cargando productos...</div>
+    </div>
   </div>
+
   <div class="detail-view" id="detailView">
     <div class="topbar">
       <button class="back-btn" onclick="goBack()">‹ Volver</button>
@@ -103,177 +87,58 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); c
     </div>
     <div class="photos-grid" id="photosGrid"></div>
     <div class="detail-body">
-      <p class="detail-code-tag" id="dCodigo"></p>
       <p class="detail-name" id="dNombre"></p>
+      <p class="detail-code" id="dCodigo"></p>
       <p class="specs-title">Especificaciones</p>
       <div id="specsContainer"></div>
     </div>
     <div class="actions">
-      <button class="btn-copy" onclick="copyText()">📋 Copiar datos del producto</button>
+      <button class="btn-copy" onclick="copyText()">
+        📋 Copiar datos del producto
+      </button>
       <div class="copied-msg" id="copiedMsg">✓ Datos copiados al portapapeles</div>
-      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>💬 Enviar por WhatsApp</button>
+      <button class="btn-wsp" id="wspBtn" onclick="shareEverything()" disabled>
+        💬 Enviar por WhatsApp
+      </button>
       <p class="select-hint" id="selectHint">Selecciona las fotos que quieres enviar</p>
     </div>
   </div>
 </div>
+
 <script>
 const SHEET_ID = '1pXIUcd2WNbr29ZWkxOdISj--yTB64vPAxQyfVjOLoQ0';
 const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1`;
-
-const ORDEN_PRIORIDAD = ['Compresores', 'Evaporadores', 'Condensadores', 'Herramientas', 'Filtros', 'Blowers'];
-const ICONOS_CATEGORIA = {
-  'Compresores': '⚙️', 'Evaporadores': '❄️', 'Condensadores': '🌬️',
-  'Herramientas': '🛠️', 'Filtros': '🧰', 'Blowers': '🌀', 'Bobinas': '🧲',
-  'Válvulas': '🔩', 'Mangueras / Fittings': '🔗', 'Fittings': '🔗',
-  'Gases / Aceites': '🧴', 'Gases': '🧪', 'Aceites': '🛢️',
-  'Switch / Sensores': '📟', 'Electroventiladores': '🌪️',
-  'Equipos Eléctricos': '🔌', 'Presostatos': '🎚️', 'Termostatos': '🌡️',
-  'Ferrules': '🔗', 'Poleas': '⭕', 'Tapas': '🔘', 'Otros': '📦'
-};
 
 let allProducts = [];
 let currentProduct = null;
 let selectedPhotos = [];
 let activeCat = '';
-let previousView = 'list';
-let savedScrollY = 0;
-
-function normalizar(texto) {
-  return (texto || "").toLowerCase().replace(/[-\s]/g, '');
-}
-
-function nombreMostrar(p) {
-  const base = `${p['Producto'] || ''} ${p['Item'] || ''}`.trim();
-  return base || p['NombreWeb'] || '(Sin nombre)';
-}
-
-function construirTextoProducto(p) {
-  const lineas = [`*${nombreMostrar(p)}*`, `Código: ${p['Codigo'] || ''}`];
-  const camposFijos = ['Marca', 'Modelo', 'Ranuras Polea', 'Voltaje', 'Refrigerante', 'Ancho', 'Alto', 'Grosor'];
-  camposFijos.forEach(campo => {
-    if (p[campo] && p[campo] !== 'null') lineas.push(`${campo}: ${p[campo]}`);
-  });
-  return lineas.join('\n');
-}
 
 async function loadProducts() {
-  // Carga instantánea desde la caché local si existe
-  const cached = localStorage.getItem('colderman_cache');
-  if (cached) {
-    try {
-      allProducts = JSON.parse(cached);
-      renderTiles();
-    } catch(e) {}
-  }
-
   try {
     const res = await fetch(URL);
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const rows = json.table.rows;
-    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Costo','Stock','Categoria','NombreWeb','Ancho','Alto','Grosor','SpecsExtra'];
-    
+    const colNames = ['Codigo','Producto','Item','Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Foto1','Foto2','Foto3','Foto4','Precio','Stock'];
     allProducts = rows.map(row => {
       const obj = {};
       colNames.forEach((col, i) => {
         obj[col] = row.c[i] ? (String(row.c[i].v) || '') : '';
       });
       return obj;
-    }).filter(p => p['Codigo']);
-    
-    // Guardar en caché local para próximas aperturas instantáneas
-    localStorage.setItem('colderman_cache', JSON.stringify(allProducts));
-    renderTiles();
+    }).filter(p => p['Codigo'] || p['Producto']);
+    renderCats(allProducts);
+    renderList(allProducts);
   } catch(e) {
-    if (!allProducts.length) {
-      document.getElementById('catTiles').innerHTML = '<div class="empty">Error cargando productos. Verifica tu conexión.</div>';
-    }
+    document.getElementById('productList').innerHTML = '<div class="empty">Error cargando productos.</div>';
   }
 }
 
-function renderTiles() {
-  const conteo = {};
-  allProducts.forEach(p => {
-    const cat = p['Categoria'] || 'Otros';
-    conteo[cat] = (conteo[cat] || 0) + 1;
-  });
-  const categoriasConProductos = Object.keys(conteo);
-  const prioritarias = ORDEN_PRIORIDAD.filter(c => categoriasConProductos.includes(c));
-  const resto = categoriasConProductos.filter(c => !prioritarias.includes(c)).sort();
-  const ordenFinal = [...prioritarias, ...resto];
-
-  const wrap = document.getElementById('catTiles');
-  wrap.innerHTML = ordenFinal.map(cat => `
-    <div class="cat-tile" onclick="openCategory('${cat.replace(/'/g, "\\'")}')">
-      <span class="cat-tile-icon">${ICONOS_CATEGORIA[cat] || '📦'}</span>
-      <span class="cat-tile-name">${cat}</span>
-      <span class="cat-tile-count">${conteo[cat]} productos</span>
-    </div>
-  `).join('');
-}
-
-function openCategory(cat) {
-  activeCat = cat;
-  previousView = 'list';
-  document.getElementById('homeView').classList.add('hidden');
-  document.getElementById('listView').classList.remove('hidden');
-  document.getElementById('listTitle').textContent = cat;
-  renderList(allProducts.filter(p => (p['Categoria'] || 'Otros') === cat));
-}
-
-let searchTimer = null;
-function debounceSearch() {
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(searchFromHome, 220);
-}
-
-function searchFromHome() {
-  const q = document.getElementById('homeSearchInput').value.trim();
-  const tiles = document.getElementById('catTiles');
-  const results = document.getElementById('homeResults');
-  const count = document.getElementById('homeCount');
-  const backBtn = document.getElementById('homeBackBtn');
-
-  if (!q) {
-    tiles.classList.remove('hidden');
-    results.classList.add('hidden');
-    count.classList.add('hidden');
-    backBtn.classList.add('hidden');
-    return;
-  }
-
-  const qNorm = normalizar(q);
-  const filtrados = allProducts.filter(p => {
-    return Object.values(p).some(v => normalizar(String(v)).includes(qNorm));
-  });
-
-  tiles.classList.add('hidden');
-  results.classList.remove('hidden');
-  count.classList.remove('hidden');
-  backBtn.classList.remove('hidden');
-  count.textContent = `${filtrados.length} productos encontrados`;
-  previousView = 'home';
-  renderList(filtrados, 'homeResults');
-}
-
-function clearHomeSearch() {
-  document.getElementById('homeSearchInput').value = '';
-  searchFromHome();
-}
-
-function goHome() {
-  document.getElementById('listView').classList.add('hidden');
-  document.getElementById('homeView').classList.remove('hidden');
-  document.getElementById('homeSearchInput').value = '';
-  searchFromHome();
-}
-
-function renderList(products, targetId) {
-  targetId = targetId || 'productList';
-  const list = document.getElementById(targetId);
-  if (targetId === 'productList') {
-    document.getElementById('productCount').textContent = `${products.length} productos`;
-  }
+function renderList(products) {
+  const list = document.getElementById('productList');
+  const count = document.getElementById('productCount');
+  count.textContent = `${products.length} productos`;
   if (products.length === 0) {
     list.innerHTML = '<div class="empty">No se encontraron productos</div>';
     return;
@@ -288,8 +153,8 @@ function renderList(products, targetId) {
     return `<div class="product-card" onclick="showDetail(${allProducts.indexOf(p)})">
       ${thumb}
       <div class="product-info">
-        <p class="product-code">${p['Codigo'] || ''}</p>
-        <p class="product-name">${nombreMostrar(p)} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
+        <p class="product-name">${p['Producto'] || ''} ${p['Item'] || ''}</p>
+        <p class="product-code">Cód: ${p['Codigo'] || ''} · ${p['Marca'] || ''} ${p['Modelo'] || ''}</p>
         ${stock}
       </div>
       <span class="arrow">›</span>
@@ -297,54 +162,63 @@ function renderList(products, targetId) {
   }).join('');
 }
 
+function renderCats(products) {
+  const cats = [...new Set(products.map(p => p['Producto']).filter(Boolean))].sort();
+  const wrap = document.getElementById('catsWrap');
+  wrap.innerHTML = `<button class="cat ${activeCat === '' ? 'active' : ''}" onclick="filterCat(this, '')">Todos</button>` +
+    cats.map(c => `<button class="cat ${activeCat === c ? 'active' : ''}" onclick="filterCat(this, '${c}')">${c}</button>`).join('');
+}
+
+function filterCat(btn, cat) {
+  activeCat = cat;
+  document.querySelectorAll('.cat').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterProducts();
+}
+
+function filterProducts() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = allProducts.filter(p =>
+    Object.values(p).some(v => String(v).toLowerCase().includes(q))
+  );
+  if (activeCat) filtered = filtered.filter(p => p['Producto'] === activeCat);
+  renderList(filtered);
+}
+
 function showDetail(idx) {
-  savedScrollY = window.scrollY;
   currentProduct = allProducts[idx];
   selectedPhotos = [];
-  document.getElementById('homeView').classList.add('hidden');
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('detailView').classList.add('active');
   document.getElementById('detailTitle').textContent = currentProduct['Codigo'] || '';
-  document.getElementById('dNombre').textContent = nombreMostrar(currentProduct);
-  document.getElementById('dCodigo').textContent = currentProduct['Codigo'] || '';
+  document.getElementById('dNombre').textContent = `${currentProduct['Producto'] || ''} ${currentProduct['Item'] || ''}`;
+  document.getElementById('dCodigo').textContent = `Código: ${currentProduct['Codigo'] || ''}`;
 
-  const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante','Ancho','Alto','Grosor'];
+  const specs = ['Marca','Modelo','Ranuras Polea','Voltaje','Refrigerante'];
   let specsHtml = specs
     .filter(k => currentProduct[k] && currentProduct[k] !== 'null')
     .map(k => `<div class="spec-row"><span class="spec-label">${k}</span><span class="spec-val">${currentProduct[k]}</span></div>`)
     .join('');
 
-  if (currentProduct['Costo'] && currentProduct['Costo'] !== '0' && currentProduct['Costo'] !== 'null') {
-    specsHtml += `<div class="spec-row"><span class="spec-label">Costo</span><span class="spec-val" style="color:#16324A;">$${Number(currentProduct['Costo']).toLocaleString('es-CL')}</span></div>`;
+  if (currentProduct['Precio'] && currentProduct['Precio'] !== '0' && currentProduct['Precio'] !== 'null') {
+    specsHtml += `<div class="spec-row"><span class="spec-label">Precio</span><span class="spec-val" style="color:#185FA5;">$${Number(currentProduct['Precio']).toLocaleString('es-CL')}</span></div>`;
   }
   if (currentProduct['Stock'] !== undefined && currentProduct['Stock'] !== '' && currentProduct['Stock'] !== 'null') {
     const stock = Number(currentProduct['Stock']);
-    const stockColor = stock > 0 ? '#3E7A4D' : '#B94A3D';
+    const stockColor = stock > 0 ? '#25a244' : '#e24b4a';
     const stockText = stock > 0 ? `${stock} disponibles` : 'Sin stock';
     specsHtml += `<div class="spec-row"><span class="spec-label">Stock</span><span class="spec-val" style="color:${stockColor};">${stockText}</span></div>`;
   }
   document.getElementById('specsContainer').innerHTML = specsHtml;
 
-  // FOTOS OFICIALES GARANTIZADAS Y ORDENADAS PARA EL CMP-2000
-  let fotos = ['Foto1','Foto2','Foto3','Foto4']
-    .map(k => currentProduct[k])
-    .filter(url => url && typeof url === 'string' && url.trim() !== '' && url !== 'null');
-
-  if (currentProduct['Codigo'] === 'CMP-2000') {
-    fotos = [
-      'https://www.colderman.cl/wp-content/uploads/2023/11/3-1-300x300.png',
-      'https://www.colderman.cl/wp-content/uploads/2023/11/2-1-300x300.png',
-      'https://www.colderman.cl/wp-content/uploads/2023/11/1-1-300x300.png'
-    ];
-  }
-
+  const fotos = ['Foto1','Foto2','Foto3','Foto4'].filter(k => currentProduct[k] && currentProduct[k] !== 'null');
   const grid = document.getElementById('photosGrid');
   if (fotos.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#B7BBC0;font-size:13px;">Sin fotos cargadas</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:1rem;text-align:center;color:#888;font-size:13px;">Sin fotos cargadas</div>';
   } else {
-    grid.innerHTML = fotos.map((urlFoto, i) => `
-      <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${urlFoto}')">
-        <img src="${urlFoto}" onerror="this.parentElement.style.display='none'" />
+    grid.innerHTML = fotos.map((k, i) => `
+      <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${currentProduct[k]}')">
+        <img src="${currentProduct[k]}" onerror="this.parentElement.style.display='none'" />
         <div class="photo-check">✓</div>
       </div>`).join('');
   }
@@ -354,8 +228,8 @@ function showDetail(idx) {
 function togglePhoto(idx, url) {
   const el = document.getElementById(`photo-${idx}`);
   const i = selectedPhotos.indexOf(url);
-  if (i === -1) { selectedPhotos.push(url); if(el) el.classList.add('selected'); }
-  else { selectedPhotos.splice(i, 1); if(el) el.classList.remove('selected'); }
+  if (i === -1) { selectedPhotos.push(url); el.classList.add('selected'); }
+  else { selectedPhotos.splice(i, 1); el.classList.remove('selected'); }
   updateWspBtn();
 }
 
@@ -373,7 +247,7 @@ function updateWspBtn() {
 
 function copyText() {
   const p = currentProduct;
-  const text = construirTextoProducto(p);
+  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nRanuras Polea: ${p['Ranuras Polea'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
   navigator.clipboard.writeText(text).then(() => {
     const msg = document.getElementById('copiedMsg');
     msg.style.display = 'block';
@@ -384,11 +258,12 @@ function copyText() {
 async function shareEverything() {
   const p = currentProduct;
   const btn = document.getElementById('wspBtn');
-  const text = construirTextoProducto(p);
+  const text = `*${p['Producto'] || ''} ${p['Item'] || ''}*\nCódigo: ${p['Codigo'] || ''}\nMarca: ${p['Marca'] || ''}\nModelo: ${p['Modelo'] || ''}\nVoltaje: ${p['Voltaje'] || ''}\nRefrigerante: ${p['Refrigerante'] || ''}`;
 
   try {
     btn.textContent = '⏳ Procesando...';
     btn.disabled = true;
+
     await navigator.clipboard.writeText(text);
 
     const filePromises = selectedPhotos.map(async (url, i) => {
@@ -401,7 +276,7 @@ async function shareEverything() {
     const files = await Promise.all(filePromises);
 
     if (navigator.share && navigator.canShare({ files })) {
-      await navigator.share({ files, text, title: nombreMostrar(p) });
+      await navigator.share({ files, text, title: p['Producto'] });
       const msg = document.getElementById('copiedMsg');
       msg.style.display = 'block';
       setTimeout(() => msg.style.display = 'none', 3000);
@@ -418,24 +293,13 @@ async function shareEverything() {
 }
 
 function goBack() {
-  if (previousView === 'home') {
-    document.getElementById('homeView').classList.remove('hidden');
-  } else {
-    document.getElementById('listView').classList.remove('hidden');
-  }
+  document.getElementById('listView').classList.remove('hidden');
   document.getElementById('detailView').classList.remove('active');
   currentProduct = null;
   selectedPhotos = [];
-  setTimeout(() => window.scrollTo(0, savedScrollY), 0);
 }
 
 loadProducts();
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
-}
 </script>
 </body>
 </html>
