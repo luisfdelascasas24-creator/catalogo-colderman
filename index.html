@@ -580,7 +580,7 @@ async function shareEverything() {
     await navigator.clipboard.writeText(text);
 
     const filePromises = selectedPhotos.map(async (url, i) => {
-      const finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=90&bg=white`;
+      const finalUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=92&bg=white&w=1280&fit=inside&we`;
       const res = await fetch(finalUrl);
       const blob = await res.blob();
       return new File([blob], `producto_${i+1}.jpg`, { type: 'image/jpeg' });
