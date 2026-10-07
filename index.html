@@ -336,6 +336,11 @@ let activeCat = '';
 let previousView = 'list'; // 'list' o 'home' — recuerda a dónde volver desde el detalle
 let savedScrollY = 0;
 
+function imgUrl(url, width) {
+  if (!url) return '';
+  return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=80&bg=white&w=${width}&fit=inside`;
+}
+
 function nombreMostrar(p) {
   const base = `${p['Producto'] || ''} ${p['Item'] || ''}`.trim();
   return base || p['NombreWeb'] || '(Sin nombre)';
@@ -468,7 +473,7 @@ function renderList(products, targetId) {
   list.innerHTML = products.map((p) => {
     const foto = p['Foto1'] || '';
     const thumb = foto
-      ? `<img class="product-thumb" src="${foto}" onerror="this.style.display='none'" />`
+      ? `<img class="product-thumb" src="${imgUrl(foto, 120)}" loading="lazy" onerror="this.style.display='none'" />`
       : `<div class="product-thumb-placeholder">📦</div>`;
     const stock = p['Stock'] && p['Stock'] !== '0' && p['Stock'] !== 'null'
       ? `<p class="product-stock">Stock: ${p['Stock']}</p>` : '';
@@ -531,7 +536,7 @@ function showDetail(idx) {
   } else {
     grid.innerHTML = fotos.map((k, i) => `
       <div class="photo-item" id="photo-${i}" onclick="togglePhoto(${i}, '${currentProduct[k]}')">
-        <img src="${currentProduct[k]}" onerror="this.parentElement.style.display='none'" />
+        <img src="${imgUrl(currentProduct[k], 400)}" loading="lazy" onerror="this.parentElement.style.display='none'" />
         <div class="photo-check">✓</div>
       </div>`).join('');
   }
